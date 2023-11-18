@@ -1,18 +1,15 @@
 # tonapi-sdk-rs
 
+[![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi-sdk-rs)
+![License](https://img.shields.io/crates/l/tonapi-sdk-rs.svg)
+
 ## Overview
 
 This is a Rust SDK generated using [OpenAPI Generator](https://openapi-generator.tech/) designed to access the [TonAPI REST endpoints](https://tonapi.io/api-v2).
 
-## Installation
-
-```bash
-cargo add tonapi-sdk-rs
-```
-
 ## Usage
 
-```rs
+```rust
 use tonapi_sdk_rs::apis::{accounts_api::get_account, accounts_api::get_account_nft_items, blockchain_api::get_blockchain_account_transactions,  configuration::Configuration};
 
 #[tokio::main]

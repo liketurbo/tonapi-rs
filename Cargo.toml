@@ -2,8 +2,13 @@
 name = "tonapi-sdk-rs"
 version = "0.1.0"
 authors = ["support@tonkeeper.com"]
-description = "Provide access to indexed TON blockchain"
 edition = "2018"
+license = "MIT"
+description = "Rust SDK designed to access the TonAPI REST endpoints"
+repository = "https://github.com/liketurbo/tonapi-sdk-rs"
+readme = "README.md"
+categories = ["cryptography::cryptocurrencies", "web-programming::http-client"]
+keywords = ["blockchain", "ton", "tonapi"]
 
 [dependencies]
 serde = "^1.0"

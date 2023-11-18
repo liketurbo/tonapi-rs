@@ -1,7 +1,4 @@
-use tonapi_sdk_rs::apis::{
-    accounts_api::get_account_nft_items, blockchain_api::get_blockchain_account_transactions,
-    configuration::Configuration, nft_api::get_nft_items_by_addresses,
-};
+use tonapi_sdk_rs::apis::{accounts_api::get_account_nft_items, configuration::Configuration};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

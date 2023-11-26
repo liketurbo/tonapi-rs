@@ -1,7 +1,6 @@
 # tonapi-sdk-rs
 
 [![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi-sdk-rs)
-![License](https://img.shields.io/crates/l/tonapi-sdk-rs.svg)
 
 ## Overview
 

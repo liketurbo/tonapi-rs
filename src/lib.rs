@@ -8,7 +8,7 @@ use generated_tonapi::{
 };
 
 pub struct RestApiV2 {
-    config: Configuration,
+    pub config: Configuration,
 }
 
 impl Default for RestApiV2 {
@@ -16,7 +16,10 @@ impl Default for RestApiV2 {
         let mut config = Configuration::default();
         let user_agent = Some(format!(
             "{}@{}",
-            env!("CARGO_PKG_NAME"),
+            env!("CARGO_PKG_REPOSITORY")
+                .split("/")
+                .last()
+                .unwrap_or(env!("CARGO_PKG_NAME")),
             env!("CARGO_PKG_VERSION")
         ));
         config.user_agent = user_agent;

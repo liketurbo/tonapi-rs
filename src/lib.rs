@@ -1,4 +1,12 @@
-use generated_tonapi::{
+#[macro_use]
+extern crate serde_derive;
+
+mod codegen {
+    #![allow(dead_code)]
+    include!(concat!(env!("OUT_DIR"), "/src/lib.rs"));
+}
+
+use codegen::{
     apis::{
         accounts_api::{get_account, GetAccountError},
         configuration::Configuration,
@@ -8,7 +16,7 @@ use generated_tonapi::{
 };
 
 pub struct RestApiV2 {
-    pub config: Configuration,
+    pub config: codegen::apis::configuration::Configuration,
 }
 
 impl Default for RestApiV2 {

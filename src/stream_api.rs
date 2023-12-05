@@ -1,14 +1,17 @@
 use async_recursion::async_recursion;
 use futures::stream::StreamExt;
+use reqwest::RequestBuilder;
 use reqwest_eventsource::EventSource;
 pub struct SseApi {
     base_url: reqwest::Url,
+    auth_token: Option<String>,
 }
 
 impl SseApi {
-    pub fn new() -> Self {
+    pub fn new(auth_token: Option<&str>) -> Self {
         SseApi {
             base_url: reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("right url"),
+            auth_token: auth_token.map(|s| s.into()),
         }
     }
 
@@ -42,7 +45,11 @@ impl SseApi {
             }
         }
 
-        TransactionsStream::new(url)
+        if let Some(auth_token) = &self.auth_token {
+            TransactionsStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
+        } else {
+            TransactionsStream::new(reqwest::Client::new().get(url))
+        }
     }
 
     pub fn traces_stream(&self, accounts: Option<&[&str]>) -> TracesStream {
@@ -61,7 +68,11 @@ impl SseApi {
             }
         }
 
-        TracesStream::new(url)
+        if let Some(auth_token) = &self.auth_token {
+            TracesStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
+        } else {
+            TracesStream::new(reqwest::Client::new().get(url))
+        }
     }
 
     pub fn mempool_stream(&self, accounts: Option<&[&str]>) -> MempoolStream {
@@ -75,7 +86,11 @@ impl SseApi {
                 .append_pair("accounts", &acs.join(","));
         }
 
-        MempoolStream::new(url)
+        if let Some(auth_token) = &self.auth_token {
+            MempoolStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
+        } else {
+            MempoolStream::new(reqwest::Client::new().get(url))
+        }
     }
 }
 
@@ -86,9 +101,9 @@ pub struct TransactionsStream {
 }
 
 impl TransactionsStream {
-    pub(crate) fn new(url: reqwest::Url) -> Self {
+    pub(crate) fn new(builder: RequestBuilder) -> Self {
         Self {
-            es: EventSource::get(url),
+            es: EventSource::new(builder).expect("build es"),
         }
     }
 
@@ -122,9 +137,9 @@ pub struct TracesStream {
 }
 
 impl TracesStream {
-    pub(crate) fn new(url: reqwest::Url) -> Self {
+    pub(crate) fn new(builder: RequestBuilder) -> Self {
         Self {
-            es: EventSource::get(url),
+            es: EventSource::new(builder).expect("build es"),
         }
     }
 
@@ -157,9 +172,9 @@ pub struct MempoolStream {
 }
 
 impl MempoolStream {
-    pub(crate) fn new(url: reqwest::Url) -> Self {
+    pub(crate) fn new(builder: RequestBuilder) -> Self {
         Self {
-            es: EventSource::get(url),
+            es: EventSource::new(builder).expect("build es"),
         }
     }
 

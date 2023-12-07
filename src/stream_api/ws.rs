@@ -2,6 +2,7 @@ use anyhow::Context;
 use async_recursion::async_recursion;
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, error, info};
+use serde::{Deserialize, Serialize};
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
 

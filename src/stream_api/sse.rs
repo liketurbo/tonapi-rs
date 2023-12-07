@@ -2,6 +2,7 @@ use async_recursion::async_recursion;
 use futures::stream::StreamExt;
 use reqwest::RequestBuilder;
 use reqwest_eventsource::{Event, EventSource};
+use serde::Deserialize;
 
 pub struct SseApi {
     base_url: reqwest::Url,

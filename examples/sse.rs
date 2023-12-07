@@ -1,4 +1,4 @@
-use tonapi::stream_api::SseApi;
+use tonapi::stream_api::sse::SseApi;
 
 async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let accounts = ["-1:5555555555555555555555555555555555555555555555555555555555555555"];

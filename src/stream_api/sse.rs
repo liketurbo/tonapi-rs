@@ -1,7 +1,8 @@
 use async_recursion::async_recursion;
 use futures::stream::StreamExt;
 use reqwest::RequestBuilder;
-use reqwest_eventsource::EventSource;
+use reqwest_eventsource::{Event, EventSource};
+
 pub struct SseApi {
     base_url: reqwest::Url,
     auth_token: Option<String>,
@@ -10,7 +11,7 @@ pub struct SseApi {
 impl SseApi {
     pub fn new(auth_token: Option<&str>) -> Self {
         SseApi {
-            base_url: reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("right url"),
+            base_url: reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"),
             auth_token: auth_token.map(|s| s.into()),
         }
     }
@@ -93,8 +94,6 @@ impl SseApi {
         }
     }
 }
-
-use reqwest_eventsource::Event;
 
 pub struct TransactionsStream {
     es: EventSource,

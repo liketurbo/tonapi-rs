@@ -1,4 +1,4 @@
-use openapi::apis::{configuration, Error};
+use codegen::apis::{configuration, Error};
 
 pub struct RestApi {
     pub config: configuration::Configuration,
@@ -21,7 +21,7 @@ impl RestApi {
 }
 
 mod accounts_api {
-    use openapi::{
+    use codegen::{
         apis::accounts_api::{
             account_dns_back_resolve, address_parse, get_account, get_account_diff,
             get_account_dns_expiring, get_account_event, get_account_events,
@@ -173,7 +173,7 @@ mod accounts_api {
 }
 
 mod blockchain_api {
-    use openapi::{
+    use codegen::{
         apis::blockchain_api::{
             blockchain_account_inspect, exec_get_method_for_blockchain_account,
             get_blockchain_account_transactions, get_blockchain_block,
@@ -336,7 +336,7 @@ mod blockchain_api {
 }
 
 mod connect_api {
-    use openapi::{
+    use codegen::{
         apis::connect_api::{
             get_account_info_by_state_init, get_ton_connect_payload,
             GetAccountInfoByStateInitError, GetAccountInfoByStateInitParams,
@@ -364,7 +364,7 @@ mod connect_api {
 }
 
 mod dns_api {
-    use openapi::{
+    use codegen::{
         apis::dns_api::{
             dns_resolve, get_all_auctions, get_dns_info, get_domain_bids, DnsResolveError,
             DnsResolveParams, GetAllAuctionsError, GetAllAuctionsParams, GetDnsInfoError,
@@ -407,7 +407,7 @@ mod dns_api {
 }
 
 mod emulation_api {
-    use openapi::{
+    use codegen::{
         apis::emulation_api::{
             decode_message, emulate_message_to_account_event, emulate_message_to_event,
             emulate_message_to_trace, emulate_message_to_wallet, DecodeMessageError,
@@ -460,7 +460,7 @@ mod emulation_api {
 }
 
 mod events_api {
-    use openapi::{
+    use codegen::{
         apis::events_api::{get_event, GetEventError, GetEventParams},
         models::Event,
     };
@@ -478,7 +478,7 @@ mod events_api {
 }
 
 mod jettons_api {
-    use openapi::{
+    use codegen::{
         apis::jettons_api::{
             get_jetton_holders, get_jetton_info, get_jettons, get_jettons_events,
             GetJettonHoldersError, GetJettonHoldersParams, GetJettonInfoError, GetJettonInfoParams,
@@ -521,7 +521,7 @@ mod jettons_api {
 }
 
 mod lite_server_api {
-    use openapi::{
+    use codegen::{
         apis::lite_server_api::{
             get_all_raw_shards_info, get_raw_account_state, get_raw_block_proof,
             get_raw_blockchain_block, get_raw_blockchain_block_header,
@@ -662,7 +662,7 @@ mod lite_server_api {
 }
 
 mod nft_api {
-    use openapi::{
+    use codegen::{
         apis::nft_api::{
             get_account_nft_history, get_items_from_collection, get_nft_collection,
             get_nft_collections, get_nft_history_by_id, get_nft_item_by_address,
@@ -730,7 +730,7 @@ mod nft_api {
 }
 
 mod rates_api {
-    use openapi::{
+    use codegen::{
         apis::rates_api::{
             get_chart_rates, get_rates, GetChartRatesError, GetChartRatesParams, GetRatesError,
             GetRatesParams,
@@ -758,7 +758,7 @@ mod rates_api {
 }
 
 mod staking_api {
-    use openapi::{
+    use codegen::{
         apis::staking_api::{
             get_account_nominators_pools, get_staking_pool_history, get_staking_pool_info,
             get_staking_pools, GetAccountNominatorsPoolsError, GetAccountNominatorsPoolsParams,
@@ -805,7 +805,7 @@ mod staking_api {
 }
 
 mod storage_api {
-    use openapi::{
+    use codegen::{
         apis::storage_api::{get_storage_providers, GetStorageProvidersError},
         models::GetStorageProviders200Response,
     };
@@ -824,7 +824,7 @@ mod storage_api {
 mod traces_api {
     use super::*;
 
-    use openapi::{
+    use codegen::{
         apis::traces_api::{get_trace, GetTraceError, GetTraceParams},
         models::Trace,
     };
@@ -840,7 +840,7 @@ mod traces_api {
 }
 
 mod wallet_api {
-    use openapi::{
+    use codegen::{
         apis::wallet_api::{
             get_account_seqno, get_wallet_backup, get_wallets_by_public_key, set_wallet_backup,
             ton_connect_proof, GetAccountSeqnoError, GetAccountSeqnoParams, GetWalletBackupError,

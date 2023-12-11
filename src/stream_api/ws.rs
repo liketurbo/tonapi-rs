@@ -7,13 +7,13 @@ use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
 
 pub struct WebsocketApi {
-    base_url: reqwest::Url,
+    base_url: url::Url,
 }
 
 impl WebsocketApi {
     pub fn new() -> Self {
         Self {
-            base_url: reqwest::Url::parse("wss://tonapi.io/v2/websocket/").expect("docs url"),
+            base_url: url::Url::parse("wss://tonapi.io/v2/websocket/").expect("docs url"),
         }
     }
 
@@ -50,14 +50,14 @@ pub enum WsMethod {
 }
 
 pub struct WsStream {
-    url: reqwest::Url,
+    url: url::Url,
     method: WsMethod,
     params: Option<Vec<String>>,
     ws_stream: Option<WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
 }
 
 impl WsStream {
-    pub fn new(url: reqwest::Url, method: WsMethod, params: Option<&[&str]>) -> Self {
+    pub fn new(url: url::Url, method: WsMethod, params: Option<&[&str]>) -> Self {
         if let Some(p) = params {
             Self {
                 url,
@@ -228,7 +228,7 @@ pub struct TransactionsStream {
 }
 
 impl TransactionsStream {
-    pub(crate) fn new(url: reqwest::Url, params: &[&str]) -> Self {
+    pub(crate) fn new(url: url::Url, params: &[&str]) -> Self {
         Self {
             ws_stream: WsStream::new(url, WsMethod::SubscribeAccount, Some(params)),
         }
@@ -271,7 +271,7 @@ pub struct TracesStream {
 }
 
 impl TracesStream {
-    pub(crate) fn new(url: reqwest::Url, params: &[&str]) -> Self {
+    pub(crate) fn new(url: url::Url, params: &[&str]) -> Self {
         Self {
             ws_stream: WsStream::new(url, WsMethod::SubscribeTrace, Some(params)),
         }
@@ -312,7 +312,7 @@ pub struct MempoolStream {
 }
 
 impl MempoolStream {
-    pub(crate) fn new(url: reqwest::Url) -> Self {
+    pub(crate) fn new(url: url::Url) -> Self {
         Self {
             ws_stream: WsStream::new(url, WsMethod::SubscribeMempool, None),
         }

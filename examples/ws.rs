@@ -1,16 +1,14 @@
-use tonapi::stream_api::ws::WebsocketApi;
+use tonapi::stream_api::WsApi;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut ws_api = WebsocketApi::transactions_stream();
-
+    let ws_api = WsApi::new(None);
     let accounts = ["-1:5555555555555555555555555555555555555555555555555555555555555555"];
-    // let mut stream = sse.transactions_stream(Some(&accounts), None);
-    ws_api.next().await.unwrap();
+    let mut stream = ws_api.transactions_stream(Some(&accounts));
 
-    while let Ok(evt) = ws_api.next().await {
+    while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
-            println!("Event: {:?}", evt);
+            println!("Event: {}", evt.params.tx_hash);
         } else {
             // Stream ended
             break;

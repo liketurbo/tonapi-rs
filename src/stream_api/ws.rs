@@ -2,18 +2,34 @@ use anyhow::Context;
 use async_recursion::async_recursion;
 use futures_util::{SinkExt, StreamExt};
 use log::{debug, error, info};
+use reqwest::header::HeaderValue;
 use serde::{Deserialize, Serialize};
+use tokio_tungstenite::tungstenite::client::IntoClientRequest;
+use tokio_tungstenite::tungstenite::http;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
 
-pub struct WebsocketApi {
-    base_url: url::Url,
+pub struct WsApi {
+    connect_params: http::request::Parts,
 }
 
-impl WebsocketApi {
-    pub fn new() -> Self {
+impl WsApi {
+    pub fn new(auth_token: Option<&str>) -> Self {
+        let mut request = "wss://tonapi.io/v2/websocket/"
+            .into_client_request()
+            .expect("docs url");
+
+        if let Some(a_token) = auth_token {
+            let bearer_token = format!("Bearer {}", a_token);
+            request.headers_mut().append(
+                "Authorization",
+                HeaderValue::from_str(&bearer_token)
+                    .expect("hope users won't use some crazy auth tokens"),
+            );
+        }
+
         Self {
-            base_url: url::Url::parse("wss://tonapi.io/v2/websocket/").expect("docs url"),
+            connect_params: request.into_parts().0,
         }
     }
 
@@ -21,23 +37,17 @@ impl WebsocketApi {
         &self,
         accounts_n_operations: Option<&[&str]>,
     ) -> TransactionsStream {
-        if let Some(acs_n_ops) = accounts_n_operations {
-            TransactionsStream::new(self.base_url.clone(), acs_n_ops)
-        } else {
-            TransactionsStream::new(self.base_url.clone(), &[])
-        }
+        let acs_n_ops = accounts_n_operations.unwrap_or_else(|| &[]);
+        TransactionsStream::new(&self.connect_params, acs_n_ops)
     }
 
     pub fn traces_stream(&self, accounts: Option<&[&str]>) -> TracesStream {
-        if let Some(acs) = accounts {
-            TracesStream::new(self.base_url.clone(), acs)
-        } else {
-            TracesStream::new(self.base_url.clone(), &[])
-        }
+        let acs = accounts.unwrap_or_else(|| &[]);
+        TracesStream::new(&self.connect_params, acs)
     }
 
     pub fn mempool_stream(&self) -> MempoolStream {
-        MempoolStream::new(self.base_url.clone())
+        MempoolStream::new(&self.connect_params)
     }
 }
 
@@ -50,34 +60,41 @@ pub enum WsMethod {
 }
 
 pub struct WsStream {
-    url: url::Url,
-    method: WsMethod,
-    params: Option<Vec<String>>,
-    ws_stream: Option<WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
+    connect_request: Option<http::Request<()>>,
+    subscribe_message: SubscribeMessage,
+    raw_ws_stream:
+        Option<WebSocketStream<tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>>>,
 }
 
 impl WsStream {
-    pub fn new(url: url::Url, method: WsMethod, params: Option<&[&str]>) -> Self {
-        if let Some(p) = params {
-            Self {
-                url,
-                method,
-                params: Some(p.into_iter().map(|s| s.to_string()).collect()),
-                ws_stream: None,
-            }
-        } else {
-            Self {
-                url,
-                method,
-                params: None,
-                ws_stream: None,
-            }
+    pub(crate) fn new(
+        connect_params: &http::request::Parts,
+        subscribe_method: WsMethod,
+        subscribe_params: Option<&[&str]>,
+    ) -> Self {
+        let subscribe_message = SubscribeMessage {
+            // I wonder, what's purpose of id ...
+            id: 1,
+            jsonrpc: "2.0".to_string(),
+            method: subscribe_method,
+            params: subscribe_params.map(|a| a.iter().map(|s| s.to_string()).collect()),
+        };
+
+        let mut new_req = http::Request::new(());
+        *new_req.method_mut() = connect_params.method.clone();
+        new_req.headers_mut().extend(connect_params.headers.clone());
+        *new_req.uri_mut() = connect_params.uri.clone();
+
+        Self {
+            connect_request: Some(new_req),
+            subscribe_message,
+            raw_ws_stream: None,
         }
     }
 
     #[async_recursion]
     pub async fn next(&mut self) -> anyhow::Result<Option<SubscribeEvent<SubscribeEventData>>> {
-        if let Some(ws_stream) = self.ws_stream.as_mut() {
+        if let Some(ws_stream) = self.raw_ws_stream.as_mut() {
             let evt = match ws_stream.next().await {
                 Some(e) => e,
                 None => return Ok(None),
@@ -122,31 +139,29 @@ impl WsStream {
     }
 
     pub async fn connect(&mut self) -> anyhow::Result<()> {
-        let (ws_stream, _) = connect_async(self.url.clone()).await?;
-        let sub_req = SubscribeRequest {
-            // I wonder, what's purpose of id ...
-            id: 1,
-            jsonrpc: "2.0".to_string(),
-            method: self.method.clone(),
-            params: self.params.clone(),
-        };
+        if let Some(con_req) = self.connect_request.take() {
+            let (ws_stream, _) = connect_async(con_req).await?;
 
-        self.ws_stream = Some(ws_stream);
-        self.ws_stream
-            .as_mut()
-            .expect("self.ws_stream set above")
-            .send(Message::Text(
-                serde_json::to_string(&sub_req).expect("stringify subscribe request"),
-            ))
-            .await?;
+            self.raw_ws_stream = Some(ws_stream);
+            self.raw_ws_stream
+                .as_mut()
+                .expect("self.ws_stream set above")
+                .send(Message::Text(
+                    serde_json::to_string(&self.subscribe_message)
+                        .expect("stringify subscribe request"),
+                ))
+                .await?;
 
-        self.wait_connect().await
+            self.wait_connect().await
+        } else {
+            Err(anyhow::anyhow!("already called connect"))
+        }
     }
 
     #[async_recursion]
     pub async fn wait_connect(&mut self) -> anyhow::Result<()> {
         let msg = self
-            .ws_stream
+            .raw_ws_stream
             .as_mut()
             .expect("ws_stream set in connect(...)")
             .next()
@@ -191,7 +206,7 @@ impl WsStream {
 }
 
 #[derive(Serialize, Debug)]
-pub struct SubscribeRequest {
+pub struct SubscribeMessage {
     id: u64,
     // 2.0
     jsonrpc: String,
@@ -228,9 +243,13 @@ pub struct TransactionsStream {
 }
 
 impl TransactionsStream {
-    pub(crate) fn new(url: url::Url, params: &[&str]) -> Self {
+    pub(crate) fn new(connect_params: &http::request::Parts, subscribe_params: &[&str]) -> Self {
         Self {
-            ws_stream: WsStream::new(url, WsMethod::SubscribeAccount, Some(params)),
+            ws_stream: WsStream::new(
+                connect_params,
+                WsMethod::SubscribeAccount,
+                Some(subscribe_params),
+            ),
         }
     }
 
@@ -261,9 +280,9 @@ impl TransactionsStream {
 
 #[derive(Deserialize, Debug)]
 pub struct TransactionEventData {
-    account_id: String,
-    lt: u64,
-    tx_hash: String,
+    pub account_id: String,
+    pub lt: u64,
+    pub tx_hash: String,
 }
 
 pub struct TracesStream {
@@ -271,9 +290,13 @@ pub struct TracesStream {
 }
 
 impl TracesStream {
-    pub(crate) fn new(url: url::Url, params: &[&str]) -> Self {
+    pub(crate) fn new(connect_params: &http::request::Parts, subscribe_params: &[&str]) -> Self {
         Self {
-            ws_stream: WsStream::new(url, WsMethod::SubscribeTrace, Some(params)),
+            ws_stream: WsStream::new(
+                connect_params,
+                WsMethod::SubscribeTrace,
+                Some(subscribe_params),
+            ),
         }
     }
 
@@ -303,8 +326,8 @@ impl TracesStream {
 
 #[derive(Deserialize, Debug)]
 pub struct TraceEventData {
-    accounts: Vec<String>,
-    hash: String,
+    pub accounts: Vec<String>,
+    pub hash: String,
 }
 
 pub struct MempoolStream {
@@ -312,9 +335,9 @@ pub struct MempoolStream {
 }
 
 impl MempoolStream {
-    pub(crate) fn new(url: url::Url) -> Self {
+    pub(crate) fn new(connect_params: &http::request::Parts) -> Self {
         Self {
-            ws_stream: WsStream::new(url, WsMethod::SubscribeMempool, None),
+            ws_stream: WsStream::new(connect_params, WsMethod::SubscribeMempool, None),
         }
     }
 
@@ -341,5 +364,5 @@ impl MempoolStream {
 
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
-    boc: String,
+    pub boc: String,
 }

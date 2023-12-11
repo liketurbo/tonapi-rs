@@ -5,14 +5,14 @@ use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
 
 pub struct SseApi {
-    base_url: url::Url,
+    base_url: reqwest::Url,
     auth_token: Option<String>,
 }
 
 impl SseApi {
     pub fn new(auth_token: Option<&str>) -> Self {
         SseApi {
-            base_url: url::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"),
+            base_url: reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"),
             auth_token: auth_token.map(|s| s.into()),
         }
     }

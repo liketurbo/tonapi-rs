@@ -9,6 +9,10 @@ use tokio_tungstenite::tungstenite::http;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
 
+mod constants {
+    include!(concat!(env!("OUT_DIR"), "/constants.rs"));
+}
+
 pub struct WsApi {
     connect_params: http::request::Parts,
 }
@@ -19,9 +23,14 @@ impl WsApi {
             .into_client_request()
             .expect("docs url");
 
+        request.headers_mut().insert(
+            "User-Agent",
+            HeaderValue::from_static(constants::USER_AGENT),
+        );
+
         if let Some(a_token) = auth_token {
             let bearer_token = format!("Bearer {}", a_token);
-            request.headers_mut().append(
+            request.headers_mut().insert(
                 "Authorization",
                 HeaderValue::from_str(&bearer_token)
                     .expect("hope users won't use some crazy auth tokens"),

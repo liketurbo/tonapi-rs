@@ -2,6 +2,10 @@ mod codegen;
 
 use codegen::apis::{configuration, Error};
 
+mod constants {
+    include!(concat!(env!("OUT_DIR"), "/constants.rs"));
+}
+
 pub struct RestApi {
     pub config: configuration::Configuration,
 }
@@ -9,14 +13,7 @@ pub struct RestApi {
 impl RestApi {
     pub fn new() -> Self {
         let mut config = configuration::Configuration::default();
-        let user_agent = Some(format!(
-            "{}@{}",
-            env!("CARGO_PKG_REPOSITORY")
-                .split("/")
-                .last()
-                .unwrap_or(env!("CARGO_PKG_NAME")),
-            env!("CARGO_PKG_VERSION")
-        ));
+        let user_agent = Some(constants::USER_AGENT.to_string());
         config.user_agent = user_agent;
         Self { config }
     }

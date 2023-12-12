@@ -4,17 +4,30 @@ use reqwest::RequestBuilder;
 use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
 
+mod constants {
+    include!(concat!(env!("OUT_DIR"), "/constants.rs"));
+}
+
 pub struct SseApi {
-    base_url: reqwest::Url,
-    auth_token: Option<String>,
+    connect_request: reqwest::Request,
 }
 
 impl SseApi {
     pub fn new(auth_token: Option<&str>) -> Self {
-        SseApi {
-            base_url: reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"),
-            auth_token: auth_token.map(|s| s.into()),
+        let client = reqwest::Client::builder()
+            .user_agent(constants::USER_AGENT)
+            .build()
+            .expect("build client");
+        let mut builder =
+            client.get(reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"));
+
+        if let Some(a_token) = auth_token {
+            builder = builder.bearer_auth(a_token);
         }
+
+        let connect_request = builder.build().expect("build request");
+
+        SseApi { connect_request }
     }
 
     pub fn transactions_stream(
@@ -22,8 +35,10 @@ impl SseApi {
         accounts: Option<&[&str]>,
         operations: Option<&[&str]>,
     ) -> TransactionsStream {
-        let mut url = self
-            .base_url
+        let mut connect_request = self.connect_request.try_clone().expect("clone request");
+        let url = connect_request.url_mut();
+
+        *url = url
             .join("accounts/transactions")
             .expect("accounts/transactions join with base");
 
@@ -47,16 +62,17 @@ impl SseApi {
             }
         }
 
-        if let Some(auth_token) = &self.auth_token {
-            TransactionsStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
-        } else {
-            TransactionsStream::new(reqwest::Client::new().get(url))
-        }
+        TransactionsStream::new(reqwest::RequestBuilder::from_parts(
+            reqwest::Client::new(),
+            connect_request,
+        ))
     }
 
     pub fn traces_stream(&self, accounts: Option<&[&str]>) -> TracesStream {
-        let mut url = self
-            .base_url
+        let mut connect_request = self.connect_request.try_clone().expect("clone request");
+        let url = connect_request.url_mut();
+
+        *url = url
             .join("accounts/traces")
             .expect("accounts/traces join with base");
 
@@ -70,29 +86,27 @@ impl SseApi {
             }
         }
 
-        if let Some(auth_token) = &self.auth_token {
-            TracesStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
-        } else {
-            TracesStream::new(reqwest::Client::new().get(url))
-        }
+        TracesStream::new(reqwest::RequestBuilder::from_parts(
+            reqwest::Client::new(),
+            connect_request,
+        ))
     }
 
     pub fn mempool_stream(&self, accounts: Option<&[&str]>) -> MempoolStream {
-        let mut url = self
-            .base_url
-            .join("mempool")
-            .expect("mempool join with base");
+        let mut connect_request = self.connect_request.try_clone().expect("clone request");
+        let url = connect_request.url_mut();
+
+        *url = url.join("mempool").expect("mempool join with base");
 
         if let Some(acs) = accounts {
             url.query_pairs_mut()
                 .append_pair("accounts", &acs.join(","));
         }
 
-        if let Some(auth_token) = &self.auth_token {
-            MempoolStream::new(reqwest::Client::new().get(url).bearer_auth(auth_token))
-        } else {
-            MempoolStream::new(reqwest::Client::new().get(url))
-        }
+        MempoolStream::new(reqwest::RequestBuilder::from_parts(
+            reqwest::Client::new(),
+            connect_request,
+        ))
     }
 }
 

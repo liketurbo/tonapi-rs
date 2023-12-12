@@ -82,6 +82,9 @@ pub async fn get_chart_rates(
         local_var_req_builder =
             local_var_req_builder.query(&[("end_date", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -126,6 +129,9 @@ pub async fn get_rates(
 
     local_var_req_builder = local_var_req_builder.query(&[("tokens", &tokens.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("currencies", &currencies.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());

@@ -279,6 +279,9 @@ pub async fn get_all_raw_shards_info(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -331,6 +334,9 @@ pub async fn get_raw_account_state(
     if let Some(ref local_var_str) = target_block {
         local_var_req_builder =
             local_var_req_builder.query(&[("target_block", &local_var_str.to_string())]);
+    }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
     }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
@@ -388,6 +394,9 @@ pub async fn get_raw_block_proof(
             local_var_req_builder.query(&[("target_block", &local_var_str.to_string())]);
     }
     local_var_req_builder = local_var_req_builder.query(&[("mode", &mode.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -436,6 +445,9 @@ pub async fn get_raw_blockchain_block(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -486,6 +498,9 @@ pub async fn get_raw_blockchain_block_header(
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     local_var_req_builder = local_var_req_builder.query(&[("mode", &mode.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -534,6 +549,9 @@ pub async fn get_raw_blockchain_block_state(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -581,6 +599,9 @@ pub async fn get_raw_config(
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     local_var_req_builder = local_var_req_builder.query(&[("mode", &mode.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -642,6 +663,9 @@ pub async fn get_raw_list_block_transactions(
     if let Some(ref local_var_str) = lt {
         local_var_req_builder = local_var_req_builder.query(&[("lt", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -687,6 +711,9 @@ pub async fn get_raw_masterchain_info(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -735,6 +762,9 @@ pub async fn get_raw_masterchain_info_ext(
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     local_var_req_builder = local_var_req_builder.query(&[("mode", &mode.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -783,6 +813,9 @@ pub async fn get_raw_shard_block_proof(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -835,6 +868,9 @@ pub async fn get_raw_shard_info(
     local_var_req_builder = local_var_req_builder.query(&[("workchain", &workchain.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("shard", &shard.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("exact", &exact.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -877,6 +913,9 @@ pub async fn get_raw_time(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -931,6 +970,9 @@ pub async fn get_raw_transactions(
     local_var_req_builder = local_var_req_builder.query(&[("count", &count.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("lt", &lt.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("hash", &hash.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -976,6 +1018,9 @@ pub async fn send_raw_message(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());

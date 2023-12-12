@@ -331,6 +331,9 @@ pub async fn account_dns_back_resolve(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -376,6 +379,9 @@ pub async fn address_parse(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -421,6 +427,9 @@ pub async fn get_account(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -471,6 +480,9 @@ pub async fn get_account_diff(
 
     local_var_req_builder = local_var_req_builder.query(&[("start_date", &start_date.to_string())]);
     local_var_req_builder = local_var_req_builder.query(&[("end_date", &end_date.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -520,6 +532,9 @@ pub async fn get_account_dns_expiring(
     if let Some(ref local_var_str) = period {
         local_var_req_builder =
             local_var_req_builder.query(&[("period", &local_var_str.to_string())]);
+    }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
     }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
@@ -573,6 +588,9 @@ pub async fn get_account_event(
     if let Some(ref local_var_str) = subject_only {
         local_var_req_builder =
             local_var_req_builder.query(&[("subject_only", &local_var_str.to_string())]);
+    }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
     }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
@@ -651,6 +669,9 @@ pub async fn get_account_events(
         local_var_req_builder =
             local_var_req_builder.query(&[("end_date", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -721,6 +742,9 @@ pub async fn get_account_jetton_history_by_id(
         local_var_req_builder =
             local_var_req_builder.query(&[("end_date", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -775,6 +799,9 @@ pub async fn get_account_jettons_balances(
     if let Some(ref local_var_str) = currencies {
         local_var_req_builder =
             local_var_req_builder.query(&[("currencies", &local_var_str.to_string())]);
+    }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
     }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
@@ -838,6 +865,9 @@ pub async fn get_account_jettons_history(
     if let Some(ref local_var_str) = end_date {
         local_var_req_builder =
             local_var_req_builder.query(&[("end_date", &local_var_str.to_string())]);
+    }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
     }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
@@ -908,6 +938,9 @@ pub async fn get_account_nft_items(
         local_var_req_builder =
             local_var_req_builder.query(&[("indirect_ownership", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -956,6 +989,9 @@ pub async fn get_account_public_key(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -1001,6 +1037,9 @@ pub async fn get_account_subscriptions(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -1051,6 +1090,9 @@ pub async fn get_account_traces(
         local_var_req_builder =
             local_var_req_builder.query(&[("limit", &local_var_str.to_string())]);
     }
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -1092,6 +1134,9 @@ pub async fn get_accounts(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -1138,6 +1183,9 @@ pub async fn reindex_account(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
@@ -1180,6 +1228,9 @@ pub async fn search_accounts(
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     local_var_req_builder = local_var_req_builder.query(&[("name", &name.to_string())]);
+    if let Some(ref bearer_access_token) = local_var_configuration.bearer_access_token {
+        local_var_req_builder = local_var_req_builder.bearer_auth(bearer_access_token);
+    }
     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());

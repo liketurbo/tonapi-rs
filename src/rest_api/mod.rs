@@ -11,10 +11,10 @@ pub struct RestApi {
 }
 
 impl RestApi {
-    pub fn new() -> Self {
+    pub fn new(auth_token: Option<&str>) -> Self {
         let mut config = configuration::Configuration::default();
-        let user_agent = Some(constants::USER_AGENT.to_string());
-        config.user_agent = user_agent;
+        config.user_agent = Some(constants::USER_AGENT.to_string());
+        config.bearer_access_token = auth_token.map(|s| s.to_string());
         Self { config }
     }
 }

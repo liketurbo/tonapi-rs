@@ -19,7 +19,7 @@ impl RestApi {
     }
 }
 
-mod accounts_api {
+pub mod accounts_api {
     use codegen::{
         apis::accounts_api::{
             account_dns_back_resolve, address_parse, get_account, get_account_diff,
@@ -27,24 +27,27 @@ mod accounts_api {
             get_account_jetton_history_by_id, get_account_jettons_balances,
             get_account_jettons_history, get_account_nft_items, get_account_public_key,
             get_account_subscriptions, get_account_traces, get_accounts, reindex_account,
-            search_accounts, AccountDnsBackResolveError, AccountDnsBackResolveParams,
-            AddressParseError, AddressParseParams, GetAccountDiffError, GetAccountDiffParams,
-            GetAccountDnsExpiringError, GetAccountDnsExpiringParams, GetAccountError,
-            GetAccountEventError, GetAccountEventParams, GetAccountEventsError,
-            GetAccountEventsParams, GetAccountJettonHistoryByIdError,
-            GetAccountJettonHistoryByIdParams, GetAccountJettonsBalancesError,
-            GetAccountJettonsBalancesParams, GetAccountJettonsHistoryError,
-            GetAccountJettonsHistoryParams, GetAccountNftItemsError, GetAccountNftItemsParams,
-            GetAccountParams, GetAccountPublicKeyError, GetAccountPublicKeyParams,
-            GetAccountSubscriptionsError, GetAccountSubscriptionsParams, GetAccountTracesError,
-            GetAccountTracesParams, GetAccountsError, GetAccountsParams, ReindexAccountError,
-            ReindexAccountParams, SearchAccountsError, SearchAccountsParams,
+            search_accounts, AccountDnsBackResolveError, AddressParseError, GetAccountDiffError,
+            GetAccountDnsExpiringError, GetAccountError, GetAccountEventError,
+            GetAccountEventsError, GetAccountJettonHistoryByIdError,
+            GetAccountJettonsBalancesError, GetAccountJettonsHistoryError, GetAccountNftItemsError,
+            GetAccountPublicKeyError, GetAccountSubscriptionsError, GetAccountTracesError,
+            GetAccountsError, ReindexAccountError, SearchAccountsError,
         },
         models::{
             Account, AccountEvent, AccountEvents, Accounts, AddressParse200Response, DnsExpiring,
             DomainNames, FoundAccounts, GetAccountDiff200Response, GetAccountPublicKey200Response,
             JettonsBalances, NftItems, Subscriptions, TraceIds,
         },
+    };
+
+    pub use codegen::apis::accounts_api::{
+        AccountDnsBackResolveParams, AddressParseParams, GetAccountDiffParams,
+        GetAccountDnsExpiringParams, GetAccountEventParams, GetAccountEventsParams,
+        GetAccountJettonHistoryByIdParams, GetAccountJettonsBalancesParams,
+        GetAccountJettonsHistoryParams, GetAccountNftItemsParams, GetAccountParams,
+        GetAccountPublicKeyParams, GetAccountSubscriptionsParams, GetAccountTracesParams,
+        GetAccountsParams, ReindexAccountParams, SearchAccountsParams,
     };
 
     use super::*;
@@ -171,7 +174,7 @@ mod accounts_api {
     }
 }
 
-mod blockchain_api {
+pub mod blockchain_api {
     use codegen::{
         apis::blockchain_api::{
             blockchain_account_inspect, exec_get_method_for_blockchain_account,
@@ -183,28 +186,31 @@ mod blockchain_api {
             get_blockchain_transaction, get_blockchain_transaction_by_message_hash,
             get_blockchain_validators, get_raw_blockchain_config,
             get_raw_blockchain_config_from_block, send_blockchain_message,
-            BlockchainAccountInspectError, BlockchainAccountInspectParams,
-            ExecGetMethodForBlockchainAccountError, ExecGetMethodForBlockchainAccountParams,
-            GetBlockchainAccountTransactionsError, GetBlockchainAccountTransactionsParams,
-            GetBlockchainBlockError, GetBlockchainBlockParams, GetBlockchainBlockTransactionsError,
-            GetBlockchainBlockTransactionsParams, GetBlockchainConfigError,
-            GetBlockchainConfigFromBlockError, GetBlockchainConfigFromBlockParams,
-            GetBlockchainMasterchainBlocksError, GetBlockchainMasterchainBlocksParams,
+            BlockchainAccountInspectError, ExecGetMethodForBlockchainAccountError,
+            GetBlockchainAccountTransactionsError, GetBlockchainBlockError,
+            GetBlockchainBlockTransactionsError, GetBlockchainConfigError,
+            GetBlockchainConfigFromBlockError, GetBlockchainMasterchainBlocksError,
             GetBlockchainMasterchainHeadError, GetBlockchainMasterchainShardsError,
-            GetBlockchainMasterchainShardsParams, GetBlockchainMasterchainTransactionsError,
-            GetBlockchainMasterchainTransactionsParams, GetBlockchainRawAccountError,
-            GetBlockchainRawAccountParams, GetBlockchainTransactionByMessageHashError,
-            GetBlockchainTransactionByMessageHashParams, GetBlockchainTransactionError,
-            GetBlockchainTransactionParams, GetBlockchainValidatorsError,
-            GetRawBlockchainConfigError, GetRawBlockchainConfigFromBlockError,
-            GetRawBlockchainConfigFromBlockParams, SendBlockchainMessageError,
-            SendBlockchainMessageParams,
+            GetBlockchainMasterchainTransactionsError, GetBlockchainRawAccountError,
+            GetBlockchainTransactionByMessageHashError, GetBlockchainTransactionError,
+            GetBlockchainValidatorsError, GetRawBlockchainConfigError,
+            GetRawBlockchainConfigFromBlockError, SendBlockchainMessageError,
         },
         models::{
             BlockchainAccountInspect, BlockchainBlock, BlockchainBlockShards, BlockchainBlocks,
             BlockchainConfig, BlockchainRawAccount, MethodExecutionResult, RawBlockchainConfig,
             Transaction, Transactions, Validators,
         },
+    };
+
+    pub use codegen::apis::blockchain_api::{
+        BlockchainAccountInspectParams, ExecGetMethodForBlockchainAccountParams,
+        GetBlockchainAccountTransactionsParams, GetBlockchainBlockParams,
+        GetBlockchainBlockTransactionsParams, GetBlockchainConfigFromBlockParams,
+        GetBlockchainMasterchainBlocksParams, GetBlockchainMasterchainShardsParams,
+        GetBlockchainMasterchainTransactionsParams, GetBlockchainRawAccountParams,
+        GetBlockchainTransactionByMessageHashParams, GetBlockchainTransactionParams,
+        GetRawBlockchainConfigFromBlockParams, SendBlockchainMessageParams,
     };
 
     use super::*;
@@ -334,15 +340,16 @@ mod blockchain_api {
     }
 }
 
-mod connect_api {
+pub mod connect_api {
     use codegen::{
         apis::connect_api::{
             get_account_info_by_state_init, get_ton_connect_payload,
-            GetAccountInfoByStateInitError, GetAccountInfoByStateInitParams,
-            GetTonConnectPayloadError,
+            GetAccountInfoByStateInitError, GetTonConnectPayloadError,
         },
         models::{AccountInfoByStateInit, GetTonConnectPayload200Response},
     };
+
+    pub use codegen::apis::connect_api::GetAccountInfoByStateInitParams;
 
     use super::*;
 
@@ -362,14 +369,17 @@ mod connect_api {
     }
 }
 
-mod dns_api {
+pub mod dns_api {
     use codegen::{
         apis::dns_api::{
             dns_resolve, get_all_auctions, get_dns_info, get_domain_bids, DnsResolveError,
-            DnsResolveParams, GetAllAuctionsError, GetAllAuctionsParams, GetDnsInfoError,
-            GetDnsInfoParams, GetDomainBidsError, GetDomainBidsParams,
+            GetAllAuctionsError, GetDnsInfoError, GetDomainBidsError,
         },
         models::{Auctions, DnsRecord, DomainBids, DomainInfo},
+    };
+
+    pub use codegen::apis::dns_api::{
+        DnsResolveParams, GetAllAuctionsParams, GetDnsInfoParams, GetDomainBidsParams,
     };
 
     use super::*;
@@ -405,17 +415,20 @@ mod dns_api {
     }
 }
 
-mod emulation_api {
+pub mod emulation_api {
     use codegen::{
         apis::emulation_api::{
             decode_message, emulate_message_to_account_event, emulate_message_to_event,
             emulate_message_to_trace, emulate_message_to_wallet, DecodeMessageError,
-            DecodeMessageParams, EmulateMessageToAccountEventError,
-            EmulateMessageToAccountEventParams, EmulateMessageToEventError,
-            EmulateMessageToEventParams, EmulateMessageToTraceError, EmulateMessageToTraceParams,
-            EmulateMessageToWalletError, EmulateMessageToWalletParams,
+            EmulateMessageToAccountEventError, EmulateMessageToEventError,
+            EmulateMessageToTraceError, EmulateMessageToWalletError,
         },
         models::{AccountEvent, DecodedMessage, Event, MessageConsequences, Trace},
+    };
+
+    pub use codegen::apis::emulation_api::{
+        DecodeMessageParams, EmulateMessageToAccountEventParams, EmulateMessageToEventParams,
+        EmulateMessageToTraceParams, EmulateMessageToWalletParams,
     };
 
     use super::*;
@@ -458,11 +471,13 @@ mod emulation_api {
     }
 }
 
-mod events_api {
+pub mod events_api {
     use codegen::{
-        apis::events_api::{get_event, GetEventError, GetEventParams},
+        apis::events_api::{get_event, GetEventError},
         models::Event,
     };
+
+    pub use codegen::apis::events_api::GetEventParams;
 
     use super::*;
 
@@ -476,14 +491,17 @@ mod events_api {
     }
 }
 
-mod jettons_api {
+pub mod jettons_api {
     use codegen::{
         apis::jettons_api::{
             get_jetton_holders, get_jetton_info, get_jettons, get_jettons_events,
-            GetJettonHoldersError, GetJettonHoldersParams, GetJettonInfoError, GetJettonInfoParams,
-            GetJettonsError, GetJettonsEventsError, GetJettonsEventsParams, GetJettonsParams,
+            GetJettonHoldersError, GetJettonInfoError, GetJettonsError, GetJettonsEventsError,
         },
         models::{Event, JettonHolders, JettonInfo, Jettons},
+    };
+
+    pub use codegen::apis::jettons_api::{
+        GetJettonHoldersParams, GetJettonInfoParams, GetJettonsEventsParams, GetJettonsParams,
     };
 
     use super::*;
@@ -519,7 +537,7 @@ mod jettons_api {
     }
 }
 
-mod lite_server_api {
+pub mod lite_server_api {
     use codegen::{
         apis::lite_server_api::{
             get_all_raw_shards_info, get_raw_account_state, get_raw_block_proof,
@@ -527,17 +545,11 @@ mod lite_server_api {
             get_raw_blockchain_block_state, get_raw_config, get_raw_list_block_transactions,
             get_raw_masterchain_info, get_raw_masterchain_info_ext, get_raw_shard_block_proof,
             get_raw_shard_info, get_raw_time, get_raw_transactions, send_raw_message,
-            GetAllRawShardsInfoError, GetAllRawShardsInfoParams, GetRawAccountStateError,
-            GetRawAccountStateParams, GetRawBlockProofError, GetRawBlockProofParams,
+            GetAllRawShardsInfoError, GetRawAccountStateError, GetRawBlockProofError,
             GetRawBlockchainBlockError, GetRawBlockchainBlockHeaderError,
-            GetRawBlockchainBlockHeaderParams, GetRawBlockchainBlockParams,
-            GetRawBlockchainBlockStateError, GetRawBlockchainBlockStateParams, GetRawConfigError,
-            GetRawConfigParams, GetRawListBlockTransactionsError,
-            GetRawListBlockTransactionsParams, GetRawMasterchainInfoError,
-            GetRawMasterchainInfoExtError, GetRawMasterchainInfoExtParams,
-            GetRawShardBlockProofError, GetRawShardBlockProofParams, GetRawShardInfoError,
-            GetRawShardInfoParams, GetRawTimeError, GetRawTransactionsError,
-            GetRawTransactionsParams, SendRawMessageError, SendRawMessageParams,
+            GetRawBlockchainBlockStateError, GetRawConfigError, GetRawListBlockTransactionsError,
+            GetRawMasterchainInfoError, GetRawMasterchainInfoExtError, GetRawShardBlockProofError,
+            GetRawShardInfoError, GetRawTimeError, GetRawTransactionsError, SendRawMessageError,
         },
         models::{
             GetAllRawShardsInfo200Response, GetRawAccountState200Response,
@@ -548,6 +560,14 @@ mod lite_server_api {
             GetRawShardBlockProof200Response, GetRawShardInfo200Response, GetRawTime200Response,
             GetRawTransactions200Response, SendRawMessage200Response,
         },
+    };
+
+    pub use codegen::apis::lite_server_api::{
+        GetAllRawShardsInfoParams, GetRawAccountStateParams, GetRawBlockProofParams,
+        GetRawBlockchainBlockHeaderParams, GetRawBlockchainBlockParams,
+        GetRawBlockchainBlockStateParams, GetRawConfigParams, GetRawListBlockTransactionsParams,
+        GetRawMasterchainInfoExtParams, GetRawShardBlockProofParams, GetRawShardInfoParams,
+        GetRawTransactionsParams, SendRawMessageParams,
     };
 
     use super::*;
@@ -660,18 +680,22 @@ mod lite_server_api {
     }
 }
 
-mod nft_api {
+pub mod nft_api {
     use codegen::{
         apis::nft_api::{
             get_account_nft_history, get_items_from_collection, get_nft_collection,
             get_nft_collections, get_nft_history_by_id, get_nft_item_by_address,
-            get_nft_items_by_addresses, GetAccountNftHistoryError, GetAccountNftHistoryParams,
-            GetItemsFromCollectionError, GetItemsFromCollectionParams, GetNftCollectionError,
-            GetNftCollectionParams, GetNftCollectionsError, GetNftCollectionsParams,
-            GetNftHistoryByIdError, GetNftHistoryByIdParams, GetNftItemByAddressError,
-            GetNftItemByAddressParams, GetNftItemsByAddressesError, GetNftItemsByAddressesParams,
+            get_nft_items_by_addresses, GetAccountNftHistoryError, GetItemsFromCollectionError,
+            GetNftCollectionError, GetNftCollectionsError, GetNftHistoryByIdError,
+            GetNftItemByAddressError, GetNftItemsByAddressesError,
         },
         models::{AccountEvents, NftCollection, NftCollections, NftItem, NftItems},
+    };
+
+    pub use codegen::apis::nft_api::{
+        GetAccountNftHistoryParams, GetItemsFromCollectionParams, GetNftCollectionParams,
+        GetNftCollectionsParams, GetNftHistoryByIdParams, GetNftItemByAddressParams,
+        GetNftItemsByAddressesParams,
     };
 
     use super::*;
@@ -728,14 +752,13 @@ mod nft_api {
     }
 }
 
-mod rates_api {
+pub mod rates_api {
     use codegen::{
-        apis::rates_api::{
-            get_chart_rates, get_rates, GetChartRatesError, GetChartRatesParams, GetRatesError,
-            GetRatesParams,
-        },
+        apis::rates_api::{get_chart_rates, get_rates, GetChartRatesError, GetRatesError},
         models::{GetChartRates200Response, GetRates200Response},
     };
+
+    pub use codegen::apis::rates_api::{GetChartRatesParams, GetRatesParams};
 
     use super::*;
 
@@ -756,18 +779,22 @@ mod rates_api {
     }
 }
 
-mod staking_api {
+pub mod staking_api {
     use codegen::{
         apis::staking_api::{
             get_account_nominators_pools, get_staking_pool_history, get_staking_pool_info,
-            get_staking_pools, GetAccountNominatorsPoolsError, GetAccountNominatorsPoolsParams,
-            GetStakingPoolHistoryError, GetStakingPoolHistoryParams, GetStakingPoolInfoError,
-            GetStakingPoolInfoParams, GetStakingPoolsError, GetStakingPoolsParams,
+            get_staking_pools, GetAccountNominatorsPoolsError, GetStakingPoolHistoryError,
+            GetStakingPoolInfoError, GetStakingPoolsError,
         },
         models::{
             AccountStaking, GetStakingPoolHistory200Response, GetStakingPoolInfo200Response,
             GetStakingPools200Response,
         },
+    };
+
+    pub use codegen::apis::staking_api::{
+        GetAccountNominatorsPoolsParams, GetStakingPoolHistoryParams, GetStakingPoolInfoParams,
+        GetStakingPoolsParams,
     };
 
     use super::*;
@@ -803,7 +830,7 @@ mod staking_api {
     }
 }
 
-mod storage_api {
+pub mod storage_api {
     use codegen::{
         apis::storage_api::{get_storage_providers, GetStorageProvidersError},
         models::GetStorageProviders200Response,
@@ -820,13 +847,15 @@ mod storage_api {
     }
 }
 
-mod traces_api {
+pub mod traces_api {
     use super::*;
 
     use codegen::{
-        apis::traces_api::{get_trace, GetTraceError, GetTraceParams},
+        apis::traces_api::{get_trace, GetTraceError},
         models::Trace,
     };
+
+    pub use codegen::apis::traces_api::GetTraceParams;
 
     impl RestApi {
         pub async fn get_trace(
@@ -838,16 +867,19 @@ mod traces_api {
     }
 }
 
-mod wallet_api {
+pub mod wallet_api {
     use codegen::{
         apis::wallet_api::{
             get_account_seqno, get_wallet_backup, get_wallets_by_public_key, set_wallet_backup,
-            ton_connect_proof, GetAccountSeqnoError, GetAccountSeqnoParams, GetWalletBackupError,
-            GetWalletBackupParams, GetWalletsByPublicKeyError, GetWalletsByPublicKeyParams,
-            SetWalletBackupError, SetWalletBackupParams, TonConnectProofError,
-            TonConnectProofParams,
+            ton_connect_proof, GetAccountSeqnoError, GetWalletBackupError,
+            GetWalletsByPublicKeyError, SetWalletBackupError, TonConnectProofError,
         },
         models::{Accounts, GetWalletBackup200Response, Seqno, TonConnectProof200Response},
+    };
+
+    pub use codegen::apis::wallet_api::{
+        GetAccountSeqnoParams, GetWalletBackupParams, GetWalletsByPublicKeyParams,
+        SetWalletBackupParams, TonConnectProofParams,
     };
 
     use super::*;

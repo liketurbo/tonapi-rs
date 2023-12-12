@@ -4,7 +4,7 @@
 
 ## Overview
 
-This is a Rust SDK generated using [OpenAPI Generator](https://openapi-generator.tech/) designed to access the [TonAPI REST endpoints](https://tonapi.io/api-v2).
+This is a [TonAPI](https://tonapi.io) Rust SDK partially generated using [OpenAPI Generator](https://openapi-generator.tech/).
 
 ## Usage
 
@@ -51,4 +51,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+```
+
+## SSE
+
+```rust
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let sse_api = SseApi::new(SseApiConfig { auth_token: None });
+    let mut stream = sse.transactions_stream(TransactionsStreamParams {
+        accounts: Some(vec![
+            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+        ]),
+        operations: None,
+    });
+
+    while let Ok(evt) = stream.next().await {
+        if let Some(evt) = evt {
+            println!("Event: {}", evt.tx_hash);
+        } else {
+            // Stream ended
+            break;
+        }
+    }
+
+    Ok(())
+}
 ```

@@ -1,5 +1,6 @@
 use async_recursion::async_recursion;
 use futures::stream::StreamExt;
+use log::debug;
 use reqwest::RequestBuilder;
 use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
@@ -14,6 +15,19 @@ pub struct SseApi {
 
 pub struct SseApiConfig {
     pub auth_token: Option<String>,
+}
+
+pub struct TransactionsStreamParams {
+    pub accounts: Option<Vec<String>>,
+    pub operations: Option<Vec<String>>,
+}
+
+pub struct TracesStreamParams {
+    pub accounts: Option<Vec<String>>,
+}
+
+pub struct MempoolStreamParams {
+    pub accounts: Option<Vec<String>>,
 }
 
 impl SseApi {
@@ -34,17 +48,26 @@ impl SseApi {
         SseApi { connect_request }
     }
 
-    pub fn transactions_stream(
-        &self,
-        accounts: Option<&[&str]>,
-        operations: Option<&[&str]>,
-    ) -> TransactionsStream {
+    pub fn transactions_stream(&self, params: TransactionsStreamParams) -> TransactionsStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
         *url = url
             .join("accounts/transactions")
             .expect("accounts/transactions join with base");
+
+        let accounts = params.accounts.and_then(|a| {
+            if a.is_empty() {
+                return None;
+            }
+            Some(a)
+        });
+        let operations = params.operations.and_then(|o| {
+            if o.is_empty() {
+                return None;
+            }
+            Some(o)
+        });
 
         match (accounts, operations) {
             (Some(acs), Some(ops)) => {
@@ -66,19 +89,28 @@ impl SseApi {
             }
         }
 
+        debug!("generated sse url: {}", url);
+
         TransactionsStream::new(reqwest::RequestBuilder::from_parts(
             reqwest::Client::new(),
             connect_request,
         ))
     }
 
-    pub fn traces_stream(&self, accounts: Option<&[&str]>) -> TracesStream {
+    pub fn traces_stream(&self, params: TracesStreamParams) -> TracesStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
         *url = url
             .join("accounts/traces")
             .expect("accounts/traces join with base");
+
+        let accounts = params.accounts.and_then(|a| {
+            if a.is_empty() {
+                return None;
+            }
+            Some(a)
+        });
 
         match accounts {
             Some(acs) => {
@@ -90,22 +122,33 @@ impl SseApi {
             }
         }
 
+        debug!("generated sse url: {}", url);
+
         TracesStream::new(reqwest::RequestBuilder::from_parts(
             reqwest::Client::new(),
             connect_request,
         ))
     }
 
-    pub fn mempool_stream(&self, accounts: Option<&[&str]>) -> MempoolStream {
+    pub fn mempool_stream(&self, params: MempoolStreamParams) -> MempoolStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
         *url = url.join("mempool").expect("mempool join with base");
 
+        let accounts = params.accounts.and_then(|a| {
+            if a.is_empty() {
+                return None;
+            }
+            Some(a)
+        });
+
         if let Some(acs) = accounts {
             url.query_pairs_mut()
                 .append_pair("accounts", &acs.join(","));
         }
+
+        debug!("generated sse url: {}", url);
 
         MempoolStream::new(reqwest::RequestBuilder::from_parts(
             reqwest::Client::new(),

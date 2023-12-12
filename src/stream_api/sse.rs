@@ -12,8 +12,12 @@ pub struct SseApi {
     connect_request: reqwest::Request,
 }
 
+pub struct SseApiConfig {
+    pub auth_token: Option<String>,
+}
+
 impl SseApi {
-    pub fn new(auth_token: Option<&str>) -> Self {
+    pub fn new(config: SseApiConfig) -> Self {
         let client = reqwest::Client::builder()
             .user_agent(constants::USER_AGENT)
             .build()
@@ -21,7 +25,7 @@ impl SseApi {
         let mut builder =
             client.get(reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"));
 
-        if let Some(a_token) = auth_token {
+        if let Some(a_token) = config.auth_token {
             builder = builder.bearer_auth(a_token);
         }
 

@@ -1,6 +1,6 @@
-# tonapi-sdk-rs
+# tonapi-rs
 
-[![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi-sdk-rs)
+[![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi)
 
 ## Overview
 
@@ -8,34 +8,47 @@ This is a Rust SDK generated using [OpenAPI Generator](https://openapi-generator
 
 ## Usage
 
+### REST
+
 ```rust
-use tonapi_sdk_rs::apis::{accounts_api::get_account, accounts_api::get_account_nft_items, blockchain_api::get_blockchain_account_transactions,  configuration::Configuration};
+use tonapi::rest_api::{
+    accounts_api::{GetAccountNftItemsParams, GetAccountParams},
+    blockchain_api::GetBlockchainAccountTransactionsParams,
+    RestApi, RestApiConfig,
+};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let config = Configuration::default();
+    let rest_api = RestApi::new(RestApiConfig { auth_token: None });
+    let account = rest_api
+        .get_account(GetAccountParams {
+            account_id: "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0".into(),
+        })
+        .await?;
+    println!("Account: {}", account.balance);
 
-    let account = get_account(&config, "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0").await?;
+    let res = rest_api
+        .get_account_nft_items(GetAccountNftItemsParams {
+            account_id: "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0".into(),
+            collection: None,
+            indirect_ownership: None,
+            limit: Some(10),
+            offset: None,
+        })
+        .await?;
+    println!("Nfts len: {}", res.nft_items.len());
 
-    let nfts_items = get_account_nft_items(
-        &config,
-        "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0",
-        None,
-        Some(10),
-        None,
-        None,
-    )
-    .await?;
-
-    let transactions = get_blockchain_account_transactions(
-        &config,
-        "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0",
-        Some(25758317000002),
-        None,
-        Some(10),
-    )
-    .await?;
+    let res = rest_api
+        .get_blockchain_account_transactions(GetBlockchainAccountTransactionsParams {
+            account_id: "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0".into(),
+            after_lt: Some(25758317000002),
+            before_lt: None,
+            limit: Some(10),
+        })
+        .await?;
+    println!("Transactions len: {}", res.transactions.len());
 
     Ok(())
 }
+
 ```

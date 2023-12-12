@@ -1,4 +1,4 @@
-use tonapi::stream_api::SseApi;
+use tonapi::stream_api::{SseApi, SseApiConfig};
 
 async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let accounts = ["-1:5555555555555555555555555555555555555555555555555555555555555555"];
@@ -50,7 +50,7 @@ async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Er
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let sse_api = SseApi::new(None);
+    let sse_api = SseApi::new(SseApiConfig { auth_token: None });
 
     subscribe_to_transactions(&sse_api).await;
     subscribe_to_traces(&sse_api).await;

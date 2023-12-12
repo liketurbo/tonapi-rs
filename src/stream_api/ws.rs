@@ -17,8 +17,12 @@ pub struct WsApi {
     connect_params: http::request::Parts,
 }
 
+pub struct WsApiConfig {
+    pub auth_token: Option<String>,
+}
+
 impl WsApi {
-    pub fn new(auth_token: Option<&str>) -> Self {
+    pub fn new(config: WsApiConfig) -> Self {
         let mut request = "wss://tonapi.io/v2/websocket/"
             .into_client_request()
             .expect("docs url");
@@ -28,7 +32,7 @@ impl WsApi {
             HeaderValue::from_static(constants::USER_AGENT),
         );
 
-        if let Some(a_token) = auth_token {
+        if let Some(a_token) = config.auth_token {
             let bearer_token = format!("Bearer {}", a_token);
             request.headers_mut().insert(
                 "Authorization",

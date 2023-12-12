@@ -1,12 +1,12 @@
 use tonapi::rest_api::{
     accounts_api::{GetAccountNftItemsParams, GetAccountParams},
     blockchain_api::GetBlockchainAccountTransactionsParams,
-    RestApi,
+    RestApi, RestApiConfig,
 };
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let rest_api = RestApi::new(None);
+    let rest_api = RestApi::new(RestApiConfig { auth_token: None });
     let account = rest_api
         .get_account(GetAccountParams {
             account_id: "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0".into(),

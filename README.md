@@ -2,9 +2,14 @@
 
 [![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi)
 
-## Overview
+This is a SDK, that provides comprehensive support for interacting with the [TonAPI](https://tonapi.io).
 
-This is a [TonAPI](https://tonapi.io) Rust SDK partially generated using [OpenAPI Generator](https://openapi-generator.tech/).
+## Features
+
+* **Authorization Support**: You can obtain token from [tonconsole.com](https://tonconsole.com).
+* **REST API Integration**: Interact with TonAPI RESTful endpoints.
+* **Streaming API (SSE, WebSocket)**: Utilize Server-Sent Events (SSE) and WebSocket protocols for real-time data streaming.
+* **Comparability with [tonlib-rs](https://github.com/ston-fi/tonlib-rs) Types** _(In progress)_
 
 ## Usage
 
@@ -114,3 +119,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 ```
+
+## Contributing
+
+Contributions to this library is welcomed! If you'd like to contribute, please feel free to open a pull request on GitHub. Your input is highly appreciated and helps improve the SDK for the entire TON community.

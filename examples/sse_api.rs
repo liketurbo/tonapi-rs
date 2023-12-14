@@ -1,5 +1,5 @@
 use simple_logger::SimpleLogger;
-use tonapi::stream_api::{
+use tonapi::stream_api::sse::{
     MempoolStreamParams, SseApi, SseApiConfig, TracesStreamParams, TransactionsStreamParams,
 };
 
@@ -30,8 +30,6 @@ async fn subscribe_to_traces(sse: &SseApi) -> Result<(), Box<dyn std::error::Err
         ]),
     });
 
-    println!("{:?}", stream.next().await.unwrap());
-
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
             println!("Event: {}", evt.hash);
@@ -50,8 +48,6 @@ async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Er
             "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
         ]),
     });
-
-    stream.next().await.unwrap();
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {

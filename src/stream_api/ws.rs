@@ -21,9 +21,26 @@ pub struct WsApiConfig {
     pub auth_token: Option<String>,
 }
 
+pub struct TransactionsStreamParams {
+    pub account_operations: Option<Vec<AccountOperations>>,
+}
+
+pub struct AccountOperations {
+    pub account: String,
+    pub operations: Option<Vec<String>>,
+}
+
+pub struct TracesStreamParams {
+    pub accounts: Option<Vec<String>>,
+}
+
+pub struct MempoolStreamParams {
+    pub accounts: Option<Vec<String>>,
+}
+
 impl WsApi {
     pub fn new(config: WsApiConfig) -> Self {
-        let mut request = "wss://tonapi.io/v2/websocket/"
+        let mut request = "wss://tonapi.io/v2/websocket"
             .into_client_request()
             .expect("docs url");
 
@@ -48,19 +65,17 @@ impl WsApi {
 
     pub fn transactions_stream(
         &self,
-        accounts_n_operations: Option<&[&str]>,
+        subscribe_params: TransactionsStreamParams,
     ) -> TransactionsStream {
-        let acs_n_ops = accounts_n_operations.unwrap_or_else(|| &[]);
-        TransactionsStream::new(&self.connect_params, acs_n_ops)
+        TransactionsStream::new(&self.connect_params, subscribe_params)
     }
 
-    pub fn traces_stream(&self, accounts: Option<&[&str]>) -> TracesStream {
-        let acs = accounts.unwrap_or_else(|| &[]);
-        TracesStream::new(&self.connect_params, acs)
+    pub fn traces_stream(&self, subscribe_params: TracesStreamParams) -> TracesStream {
+        TracesStream::new(&self.connect_params, subscribe_params)
     }
 
-    pub fn mempool_stream(&self) -> MempoolStream {
-        MempoolStream::new(&self.connect_params)
+    pub fn mempool_stream(&self, subscribe_params: MempoolStreamParams) -> MempoolStream {
+        MempoolStream::new(&self.connect_params, subscribe_params)
     }
 }
 
@@ -70,6 +85,10 @@ pub enum WsMethod {
     SubscribeAccount,
     SubscribeTrace,
     SubscribeMempool,
+}
+
+pub(crate) struct StreamParams {
+    pub entries: Vec<String>,
 }
 
 pub struct WsStream {
@@ -83,14 +102,14 @@ impl WsStream {
     pub(crate) fn new(
         connect_params: &http::request::Parts,
         subscribe_method: WsMethod,
-        subscribe_params: Option<&[&str]>,
+        subscribe_params: Option<StreamParams>,
     ) -> Self {
         let subscribe_message = SubscribeMessage {
             // I wonder, what's purpose of id ...
             id: 1,
             jsonrpc: "2.0".to_string(),
             method: subscribe_method,
-            params: subscribe_params.map(|a| a.iter().map(|s| s.to_string()).collect()),
+            params: subscribe_params.map(|e| e.entries),
         };
 
         let mut new_req = http::Request::new(());
@@ -237,6 +256,7 @@ pub struct SubscribeEvent<P> {
 }
 
 #[derive(Deserialize, Debug)]
+#[serde(untagged)]
 pub enum SubscribeEventData {
     AccountData(TransactionEventData),
     TraceData(TraceEventData),
@@ -256,13 +276,26 @@ pub struct TransactionsStream {
 }
 
 impl TransactionsStream {
-    pub(crate) fn new(connect_params: &http::request::Parts, subscribe_params: &[&str]) -> Self {
+    pub(crate) fn new(
+        connect_params: &http::request::Parts,
+        subscribe_params: TransactionsStreamParams,
+    ) -> Self {
+        let subscribe_params = subscribe_params.account_operations.map(|acs_ops| {
+            let entries = acs_ops
+                .into_iter()
+                .map(|ac_op| {
+                    let ops = ac_op.operations.unwrap_or_default();
+                    if ops.is_empty() {
+                        ac_op.account
+                    } else {
+                        format!("{};{}", ac_op.account, ops.join(","))
+                    }
+                })
+                .collect();
+            StreamParams { entries }
+        });
         Self {
-            ws_stream: WsStream::new(
-                connect_params,
-                WsMethod::SubscribeAccount,
-                Some(subscribe_params),
-            ),
+            ws_stream: WsStream::new(connect_params, WsMethod::SubscribeAccount, subscribe_params),
         }
     }
 
@@ -303,12 +336,17 @@ pub struct TracesStream {
 }
 
 impl TracesStream {
-    pub(crate) fn new(connect_params: &http::request::Parts, subscribe_params: &[&str]) -> Self {
+    pub(crate) fn new(
+        connect_params: &http::request::Parts,
+        subscribe_params: TracesStreamParams,
+    ) -> Self {
         Self {
             ws_stream: WsStream::new(
                 connect_params,
                 WsMethod::SubscribeTrace,
-                Some(subscribe_params),
+                subscribe_params
+                    .accounts
+                    .map(|a| StreamParams { entries: a }),
             ),
         }
     }
@@ -348,9 +386,18 @@ pub struct MempoolStream {
 }
 
 impl MempoolStream {
-    pub(crate) fn new(connect_params: &http::request::Parts) -> Self {
+    pub(crate) fn new(
+        connect_params: &http::request::Parts,
+        subscribe_params: MempoolStreamParams,
+    ) -> Self {
         Self {
-            ws_stream: WsStream::new(connect_params, WsMethod::SubscribeMempool, None),
+            ws_stream: WsStream::new(
+                connect_params,
+                WsMethod::SubscribeMempool,
+                subscribe_params
+                    .accounts
+                    .map(|a| StreamParams { entries: a }),
+            ),
         }
     }
 
@@ -365,7 +412,10 @@ impl MempoolStream {
             SubscribeEventData::MempoolData(m_data) => Ok(Some(SubscribeEvent {
                 jsonrpc: evt.jsonrpc,
                 method: evt.method,
-                params: MempoolEventData { boc: m_data.boc },
+                params: MempoolEventData {
+                    boc: m_data.boc,
+                    involved_accounts: m_data.involved_accounts,
+                },
             })),
             _ => {
                 error!("invalid event.params {:#?}", evt.params);
@@ -378,4 +428,5 @@ impl MempoolStream {
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
     pub boc: String,
+    pub involved_accounts: Option<Vec<String>>,
 }

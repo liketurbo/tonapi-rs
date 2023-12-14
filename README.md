@@ -56,6 +56,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## SSE
 
 ```rust
+use tonapi::stream_api::sse::{
+    SseApi, SseApiConfig, TransactionsStreamParams,
+};
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sse_api = SseApi::new(SseApiConfig { auth_token: None });
@@ -77,4 +81,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     Ok(())
 }
+```
+
+## WebSocket
+
+```rust
+use tonapi::stream_api::ws::{
+    AccountOperations, TransactionsStreamParams, WsApi, WsApiConfig,
+};
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let ws_api = WsApi::new(WsApiConfig { auth_token: None });
+    let mut stream = ws.transactions_stream(TransactionsStreamParams {
+        account_operations: Some(vec![AccountOperations {
+            account: "-1:5555555555555555555555555555555555555555555555555555555555555555"
+                .to_string(),
+            operations: None,
+        }]),
+    });
+
+    while let Ok(evt) = stream.next().await {
+        if let Some(evt) = evt {
+            println!("Event: {}", evt.params.tx_hash);
+        } else {
+            // Stream ended
+            break;
+        }
+    }
+
+    Ok(())
+}
+
 ```

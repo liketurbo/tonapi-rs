@@ -1,6 +1,6 @@
 # tonapi-rs
 
-[![Latest version](https://img.shields.io/crates/v/tonapi-sdk-rs.svg)](https://crates.io/crates/tonapi)
+[![Latest version](https://img.shields.io/crates/v/tonapi.svg)](https://crates.io/crates/tonapi)
 
 This is a SDK, that provides comprehensive support for interacting with the [TonAPI](https://tonapi.io).
 

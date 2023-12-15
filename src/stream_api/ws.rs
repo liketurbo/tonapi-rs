@@ -1,7 +1,7 @@
 use anyhow::Context;
 use async_recursion::async_recursion;
 use futures_util::{SinkExt, StreamExt};
-use log::{debug, error, info};
+use log::{debug, error, info, warn};
 use reqwest::header::HeaderValue;
 use serde::{Deserialize, Serialize};
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
@@ -79,9 +79,9 @@ impl WsApi {
     }
 }
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(rename_all = "snake_case")]
-pub enum WsMethod {
+enum WsMethod {
     SubscribeAccount,
     SubscribeTrace,
     SubscribeMempool,
@@ -91,7 +91,7 @@ pub(crate) struct StreamParams {
     pub entries: Vec<String>,
 }
 
-pub struct WsStream {
+struct WsStream {
     connect_request: Option<http::Request<()>>,
     subscribe_message: SubscribeMessage,
     raw_ws_stream:
@@ -99,7 +99,7 @@ pub struct WsStream {
 }
 
 impl WsStream {
-    pub(crate) fn new(
+    pub fn new(
         connect_params: &http::request::Parts,
         subscribe_method: WsMethod,
         subscribe_params: Option<StreamParams>,
@@ -226,6 +226,14 @@ impl WsStream {
                 debug!("text from server with {:#?}", text);
                 let parsed_msg: SubscribeResponse =
                     serde_json::from_str(&text).expect("json parsing subscribed event");
+                if parsed_msg.id != self.subscribe_message.id
+                    || parsed_msg.jsonrpc != self.subscribe_message.jsonrpc
+                    || parsed_msg.method != self.subscribe_message.method
+                {
+                    debug!("request: {:#?}", self.subscribe_message);
+                    debug!("response: {:#?}", parsed_msg);
+                    warn!("ws request didn't match with response");
+                }
                 debug!("init connection response: {}", parsed_msg.result);
                 return Ok(());
             }
@@ -238,7 +246,7 @@ impl WsStream {
 }
 
 #[derive(Serialize, Debug)]
-pub struct SubscribeMessage {
+struct SubscribeMessage {
     id: u64,
     // 2.0
     jsonrpc: String,
@@ -257,17 +265,17 @@ pub struct SubscribeEvent<P> {
 
 #[derive(Deserialize, Debug)]
 #[serde(untagged)]
-pub enum SubscribeEventData {
+enum SubscribeEventData {
     AccountData(TransactionEventData),
     TraceData(TraceEventData),
     MempoolData(MempoolEventData),
 }
 
 #[derive(Deserialize, Debug)]
-pub struct SubscribeResponse {
+struct SubscribeResponse {
     pub id: u64,
     pub jsonrpc: String,
-    pub method: String,
+    pub method: WsMethod,
     pub result: String,
 }
 

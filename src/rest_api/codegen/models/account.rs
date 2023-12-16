@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Account {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "balance")]
     pub balance: i64,
     /// unix timestamp
@@ -41,7 +42,7 @@ pub struct Account {
 
 impl Account {
     pub fn new(
-        address: String,
+        address: TonAddress,
         balance: i64,
         last_activity: i64,
         status: String,

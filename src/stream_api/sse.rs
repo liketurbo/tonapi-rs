@@ -4,6 +4,7 @@ use log::debug;
 use reqwest::RequestBuilder;
 use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
+use tonlib::address::TonAddress;
 
 mod constants {
     include!(concat!(env!("OUT_DIR"), "/constants.rs"));
@@ -18,16 +19,16 @@ pub struct SseApiConfig {
 }
 
 pub struct TransactionsStreamParams {
-    pub accounts: Option<Vec<String>>,
+    pub accounts: Option<Vec<TonAddress>>,
     pub operations: Option<Vec<String>>,
 }
 
 pub struct TracesStreamParams {
-    pub accounts: Option<Vec<String>>,
+    pub accounts: Option<Vec<TonAddress>>,
 }
 
 pub struct MempoolStreamParams {
-    pub accounts: Option<Vec<String>>,
+    pub accounts: Option<Vec<TonAddress>>,
 }
 
 impl SseApi {
@@ -60,7 +61,7 @@ impl SseApi {
             if a.is_empty() {
                 return None;
             }
-            Some(a)
+            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
         });
         let operations = params.operations.and_then(|o| {
             if o.is_empty() {
@@ -109,7 +110,7 @@ impl SseApi {
             if a.is_empty() {
                 return None;
             }
-            Some(a)
+            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
         });
 
         match accounts {
@@ -140,7 +141,7 @@ impl SseApi {
             if a.is_empty() {
                 return None;
             }
-            Some(a)
+            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
         });
 
         if let Some(acs) = accounts {
@@ -260,5 +261,5 @@ impl MempoolStream {
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
     pub boc: String,
-    pub involved_accounts: Vec<String>,
+    pub involved_accounts: Vec<TonAddress>,
 }

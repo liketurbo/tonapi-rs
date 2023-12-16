@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -26,7 +27,7 @@ pub struct GetAllRawShardsInfoParams {
 #[derive(Clone, Debug)]
 pub struct GetRawAccountStateParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// target block: (workchain,shard,seqno,root_hash,file_hash)
     pub target_block: Option<String>,
 }
@@ -120,7 +121,7 @@ pub struct GetRawShardInfoParams {
 #[derive(Clone, Debug)]
 pub struct GetRawTransactionsParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// count
     pub count: i32,
     /// lt
@@ -326,7 +327,7 @@ pub async fn get_raw_account_state(
     let local_var_uri_str = format!(
         "{}/v2/liteserver/get_account_state/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -962,7 +963,7 @@ pub async fn get_raw_transactions(
     let local_var_uri_str = format!(
         "{}/v2/liteserver/get_transactions/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());

@@ -1,13 +1,16 @@
 use simple_logger::SimpleLogger;
-use tonapi::stream_api::sse::{
-    MempoolStreamParams, SseApi, SseApiConfig, TracesStreamParams, TransactionsStreamParams,
+use tonapi::{
+    stream_api::sse::{
+        MempoolStreamParams, SseApi, SseApiConfig, TracesStreamParams, TransactionsStreamParams,
+    },
+    TonAddress,
 };
 
 async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = sse.transactions_stream(TransactionsStreamParams {
-        accounts: Some(vec![
-            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
-        ]),
+        accounts: Some(vec![TonAddress::from_hex_str(
+            "-1:5555555555555555555555555555555555555555555555555555555555555555",
+        )?]),
         operations: None,
     });
 
@@ -25,9 +28,9 @@ async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::erro
 
 async fn subscribe_to_traces(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = sse.traces_stream(TracesStreamParams {
-        accounts: Some(vec![
-            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
-        ]),
+        accounts: Some(vec![TonAddress::from_hex_str(
+            "-1:5555555555555555555555555555555555555555555555555555555555555555",
+        )?]),
     });
 
     while let Ok(evt) = stream.next().await {
@@ -44,9 +47,9 @@ async fn subscribe_to_traces(sse: &SseApi) -> Result<(), Box<dyn std::error::Err
 
 async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = sse.mempool_stream(MempoolStreamParams {
-        accounts: Some(vec![
-            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
-        ]),
+        accounts: Some(vec![TonAddress::from_hex_str(
+            "-1:5555555555555555555555555555555555555555555555555555555555555555",
+        )?]),
     });
 
     while let Ok(evt) = stream.next().await {

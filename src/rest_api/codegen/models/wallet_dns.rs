@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct WalletDns {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "is_wallet")]
     pub is_wallet: bool,
     #[serde(rename = "has_method_pubkey")]
@@ -26,7 +27,7 @@ pub struct WalletDns {
 
 impl WalletDns {
     pub fn new(
-        address: String,
+        address: TonAddress,
         is_wallet: bool,
         has_method_pubkey: bool,
         has_method_seqno: bool,

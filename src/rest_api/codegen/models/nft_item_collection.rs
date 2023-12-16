@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct NftItemCollection {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "name")]
     pub name: String,
     #[serde(rename = "description")]
@@ -21,7 +22,7 @@ pub struct NftItemCollection {
 }
 
 impl NftItemCollection {
-    pub fn new(address: String, name: String, description: String) -> NftItemCollection {
+    pub fn new(address: TonAddress, name: String, description: String) -> NftItemCollection {
         NftItemCollection {
             address,
             name,

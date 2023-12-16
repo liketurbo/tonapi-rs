@@ -8,6 +8,7 @@ use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::http;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
+use tonlib::address::TonAddress;
 
 mod constants {
     include!(concat!(env!("OUT_DIR"), "/constants.rs"));
@@ -26,16 +27,16 @@ pub struct TransactionsStreamParams {
 }
 
 pub struct AccountOperations {
-    pub account: String,
+    pub account: TonAddress,
     pub operations: Option<Vec<String>>,
 }
 
 pub struct TracesStreamParams {
-    pub accounts: Option<Vec<String>>,
+    pub accounts: Option<Vec<TonAddress>>,
 }
 
 pub struct MempoolStreamParams {
-    pub accounts: Option<Vec<String>>,
+    pub accounts: Option<Vec<TonAddress>>,
 }
 
 impl WsApi {
@@ -294,7 +295,7 @@ impl TransactionsStream {
                 .map(|ac_op| {
                     let ops = ac_op.operations.unwrap_or_default();
                     if ops.is_empty() {
-                        ac_op.account
+                        ac_op.account.to_base64_url()
                     } else {
                         format!("{};{}", ac_op.account, ops.join(","))
                     }
@@ -352,9 +353,9 @@ impl TracesStream {
             ws_stream: WsStream::new(
                 connect_params,
                 WsMethod::SubscribeTrace,
-                subscribe_params
-                    .accounts
-                    .map(|a| StreamParams { entries: a }),
+                subscribe_params.accounts.map(|a| StreamParams {
+                    entries: a.iter().map(|a| a.to_base64_url()).collect(),
+                }),
             ),
         }
     }
@@ -402,9 +403,9 @@ impl MempoolStream {
             ws_stream: WsStream::new(
                 connect_params,
                 WsMethod::SubscribeMempool,
-                subscribe_params
-                    .accounts
-                    .map(|a| StreamParams { entries: a }),
+                subscribe_params.accounts.map(|a| StreamParams {
+                    entries: a.iter().map(|a| a.to_base64_url()).collect(),
+                }),
             ),
         }
     }
@@ -436,5 +437,5 @@ impl MempoolStream {
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
     pub boc: String,
-    pub involved_accounts: Option<Vec<String>>,
+    pub involved_accounts: Option<Vec<TonAddress>>,
 }

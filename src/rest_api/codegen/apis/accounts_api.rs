@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -19,28 +20,28 @@ use crate::rest_api::codegen::apis::ResponseContent;
 #[derive(Clone, Debug)]
 pub struct AccountDnsBackResolveParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`address_parse`]
 #[derive(Clone, Debug)]
 pub struct AddressParseParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_account`]
 #[derive(Clone, Debug)]
 pub struct GetAccountParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_account_diff`]
 #[derive(Clone, Debug)]
 pub struct GetAccountDiffParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub start_date: i64,
     pub end_date: i64,
 }
@@ -49,7 +50,7 @@ pub struct GetAccountDiffParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountDnsExpiringParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// number of days before expiration
     pub period: Option<i32>,
 }
@@ -58,7 +59,7 @@ pub struct GetAccountDnsExpiringParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountEventParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// event ID or transaction hash in hex (without 0x) or base64url format
     pub event_id: String,
     pub accept_language: Option<String>,
@@ -70,7 +71,7 @@ pub struct GetAccountEventParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountEventsParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: i32,
     pub accept_language: Option<String>,
     /// Show only events that are initiated by this account
@@ -87,7 +88,7 @@ pub struct GetAccountEventsParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountJettonHistoryByIdParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// jetton ID
     pub jetton_id: String,
     pub limit: i32,
@@ -102,7 +103,7 @@ pub struct GetAccountJettonHistoryByIdParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountJettonsBalancesParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// accept ton and all possible fiat currencies, separated by commas
     pub currencies: Option<String>,
 }
@@ -111,7 +112,7 @@ pub struct GetAccountJettonsBalancesParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountJettonsHistoryParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: i32,
     pub accept_language: Option<String>,
     /// omit this parameter to get last events
@@ -124,7 +125,7 @@ pub struct GetAccountJettonsHistoryParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountNftItemsParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// nft collection
     pub collection: Option<String>,
     pub limit: Option<i32>,
@@ -137,21 +138,21 @@ pub struct GetAccountNftItemsParams {
 #[derive(Clone, Debug)]
 pub struct GetAccountPublicKeyParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_account_subscriptions`]
 #[derive(Clone, Debug)]
 pub struct GetAccountSubscriptionsParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_account_traces`]
 #[derive(Clone, Debug)]
 pub struct GetAccountTracesParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: Option<i32>,
 }
 
@@ -166,7 +167,7 @@ pub struct GetAccountsParams {
 #[derive(Clone, Debug)]
 pub struct ReindexAccountParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`search_accounts`]
@@ -326,7 +327,7 @@ pub async fn account_dns_back_resolve(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/dns/backresolve",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -374,7 +375,7 @@ pub async fn address_parse(
     let local_var_uri_str = format!(
         "{}/v2/address/{account_id}/parse",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -422,7 +423,7 @@ pub async fn get_account(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -473,7 +474,7 @@ pub async fn get_account_diff(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/diff",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -524,7 +525,7 @@ pub async fn get_account_dns_expiring(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/dns/expiring",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -579,7 +580,7 @@ pub async fn get_account_event(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/events/{event_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id),
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url()),
         event_id = crate::rest_api::codegen::apis::urlencode(event_id)
     );
     let mut local_var_req_builder =
@@ -643,7 +644,7 @@ pub async fn get_account_events(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/events",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -723,7 +724,7 @@ pub async fn get_account_jetton_history_by_id(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/jettons/{jetton_id}/history",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id),
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url()),
         jetton_id = crate::rest_api::codegen::apis::urlencode(jetton_id)
     );
     let mut local_var_req_builder =
@@ -791,7 +792,7 @@ pub async fn get_account_jettons_balances(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/jettons",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -848,7 +849,7 @@ pub async fn get_account_jettons_history(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/jettons/history",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -917,7 +918,7 @@ pub async fn get_account_nft_items(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/nfts",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -984,7 +985,7 @@ pub async fn get_account_public_key(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/publickey",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -1032,7 +1033,7 @@ pub async fn get_account_subscriptions(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/subscriptions",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -1081,7 +1082,7 @@ pub async fn get_account_traces(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/traces",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -1178,7 +1179,7 @@ pub async fn reindex_account(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/reindex",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());

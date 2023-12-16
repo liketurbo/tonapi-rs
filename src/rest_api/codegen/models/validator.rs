@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Validator {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "adnl_address")]
     pub adnl_address: String,
     #[serde(rename = "stake")]
@@ -23,7 +24,12 @@ pub struct Validator {
 }
 
 impl Validator {
-    pub fn new(address: String, adnl_address: String, stake: i64, max_factor: i64) -> Validator {
+    pub fn new(
+        address: TonAddress,
+        adnl_address: String,
+        stake: i64,
+        max_factor: i64,
+    ) -> Validator {
         Validator {
             address,
             adnl_address,

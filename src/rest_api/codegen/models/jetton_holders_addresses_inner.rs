@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct JettonHoldersAddressesInner {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "owner")]
     pub owner: Box<crate::rest_api::codegen::models::AccountAddress>,
     #[serde(rename = "balance")]
@@ -22,7 +23,7 @@ pub struct JettonHoldersAddressesInner {
 
 impl JettonHoldersAddressesInner {
     pub fn new(
-        address: String,
+        address: TonAddress,
         owner: crate::rest_api::codegen::models::AccountAddress,
         balance: String,
     ) -> JettonHoldersAddressesInner {

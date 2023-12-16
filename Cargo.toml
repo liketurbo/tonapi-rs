@@ -1,6 +1,6 @@
 [package]
 name = "tonapi"
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 license = "MIT"
 description = "SDK for integrating TonAPI into Rust apps"
@@ -23,6 +23,7 @@ tokio-tungstenite = { version = "^0.20", features = ["native-tls"] }
 futures-util = "^0.3"
 log = "^0.4"
 form_urlencoded = "^1.2"
+tonlib = "^0.11"
 
 [dev-dependencies]
 tokio = { version = "^1.34", features = ["full"] }

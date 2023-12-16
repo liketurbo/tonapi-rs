@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -19,7 +20,7 @@ use crate::rest_api::codegen::apis::ResponseContent;
 #[derive(Clone, Debug)]
 pub struct GetAccountNftHistoryParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: i32,
     pub accept_language: Option<String>,
     /// omit this parameter to get last events
@@ -32,7 +33,7 @@ pub struct GetAccountNftHistoryParams {
 #[derive(Clone, Debug)]
 pub struct GetItemsFromCollectionParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: Option<i32>,
     pub offset: Option<i32>,
 }
@@ -41,7 +42,7 @@ pub struct GetItemsFromCollectionParams {
 #[derive(Clone, Debug)]
 pub struct GetNftCollectionParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_nft_collections`]
@@ -55,7 +56,7 @@ pub struct GetNftCollectionsParams {
 #[derive(Clone, Debug)]
 pub struct GetNftHistoryByIdParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: i32,
     pub accept_language: Option<String>,
     /// omit this parameter to get last events
@@ -68,7 +69,7 @@ pub struct GetNftHistoryByIdParams {
 #[derive(Clone, Debug)]
 pub struct GetNftItemByAddressParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_nft_items_by_addresses`]
@@ -154,7 +155,7 @@ pub async fn get_account_nft_history(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/nfts/history",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -221,7 +222,7 @@ pub async fn get_items_from_collection(
     let local_var_uri_str = format!(
         "{}/v2/nfts/collections/{account_id}/items",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -277,7 +278,7 @@ pub async fn get_nft_collection(
     let local_var_uri_str = format!(
         "{}/v2/nfts/collections/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -383,7 +384,7 @@ pub async fn get_nft_history_by_id(
     let local_var_uri_str = format!(
         "{}/v2/nfts/{account_id}/history",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -448,7 +449,7 @@ pub async fn get_nft_item_by_address(
     let local_var_uri_str = format!(
         "{}/v2/nfts/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());

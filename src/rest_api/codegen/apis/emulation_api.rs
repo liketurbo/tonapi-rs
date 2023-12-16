@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -26,7 +27,7 @@ pub struct DecodeMessageParams {
 #[derive(Clone, Debug)]
 pub struct EmulateMessageToAccountEventParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// bag-of-cells serialized to base64
     pub decode_message_request: crate::rest_api::codegen::models::DecodeMessageRequest,
     pub accept_language: Option<String>,
@@ -161,7 +162,7 @@ pub async fn emulate_message_to_account_event(
     let local_var_uri_str = format!(
         "{}/v2/accounts/{account_id}/events/emulate",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());

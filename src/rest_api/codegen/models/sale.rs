@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Sale {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "market")]
     pub market: Box<crate::rest_api::codegen::models::AccountAddress>,
     #[serde(rename = "owner", skip_serializing_if = "Option::is_none")]
@@ -24,7 +25,7 @@ pub struct Sale {
 
 impl Sale {
     pub fn new(
-        address: String,
+        address: TonAddress,
         market: crate::rest_api::codegen::models::AccountAddress,
         price: crate::rest_api::codegen::models::Price,
     ) -> Sale {

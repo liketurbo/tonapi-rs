@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -19,7 +20,7 @@ use crate::rest_api::codegen::apis::ResponseContent;
 #[derive(Clone, Debug)]
 pub struct GetJettonHoldersParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     pub limit: Option<i32>,
     pub offset: Option<i32>,
 }
@@ -28,7 +29,7 @@ pub struct GetJettonHoldersParams {
 #[derive(Clone, Debug)]
 pub struct GetJettonInfoParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_jettons`]
@@ -95,7 +96,7 @@ pub async fn get_jetton_holders(
     let local_var_uri_str = format!(
         "{}/v2/jettons/{account_id}/holders",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -151,7 +152,7 @@ pub async fn get_jetton_info(
     let local_var_uri_str = format!(
         "{}/v2/jettons/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());

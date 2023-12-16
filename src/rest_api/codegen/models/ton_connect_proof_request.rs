@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -13,14 +14,14 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TonConnectProofRequest {
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
     #[serde(rename = "proof")]
     pub proof: Box<crate::rest_api::codegen::models::TonConnectProofRequestProof>,
 }
 
 impl TonConnectProofRequest {
     pub fn new(
-        address: String,
+        address: TonAddress,
         proof: crate::rest_api::codegen::models::TonConnectProofRequestProof,
     ) -> TonConnectProofRequest {
         TonConnectProofRequest {

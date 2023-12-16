@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use tonlib::address::TonAddress;
 
 /*
  * REST api to TON blockchain explorer
@@ -15,11 +16,11 @@ pub struct AccountInfoByStateInit {
     #[serde(rename = "public_key")]
     pub public_key: String,
     #[serde(rename = "address")]
-    pub address: String,
+    pub address: TonAddress,
 }
 
 impl AccountInfoByStateInit {
-    pub fn new(public_key: String, address: String) -> AccountInfoByStateInit {
+    pub fn new(public_key: String, address: TonAddress) -> AccountInfoByStateInit {
         AccountInfoByStateInit {
             public_key,
             address,

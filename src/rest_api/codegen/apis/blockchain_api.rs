@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
  */
 
 use reqwest;
+use tonlib::address::TonAddress;
 
 use super::{configuration, Error};
 use crate::rest_api::codegen::apis::ResponseContent;
@@ -19,14 +20,14 @@ use crate::rest_api::codegen::apis::ResponseContent;
 #[derive(Clone, Debug)]
 pub struct BlockchainAccountInspectParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`exec_get_method_for_blockchain_account`]
 #[derive(Clone, Debug)]
 pub struct ExecGetMethodForBlockchainAccountParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// contract get method name
     pub method_name: String,
     pub args: Option<Vec<String>>,
@@ -36,7 +37,7 @@ pub struct ExecGetMethodForBlockchainAccountParams {
 #[derive(Clone, Debug)]
 pub struct GetBlockchainAccountTransactionsParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
     /// omit this parameter to get last transactions
     pub after_lt: Option<i64>,
     /// omit this parameter to get last transactions
@@ -90,7 +91,7 @@ pub struct GetBlockchainMasterchainTransactionsParams {
 #[derive(Clone, Debug)]
 pub struct GetBlockchainRawAccountParams {
     /// account ID
-    pub account_id: String,
+    pub account_id: TonAddress,
 }
 
 /// struct for passing parameters to the method [`get_blockchain_transaction`]
@@ -284,7 +285,7 @@ pub async fn blockchain_account_inspect(
     let local_var_uri_str = format!(
         "{}/v2/blockchain/accounts/{account_id}/inspect",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -337,7 +338,7 @@ pub async fn exec_get_method_for_blockchain_account(
     let local_var_uri_str = format!(
         "{}/v2/blockchain/accounts/{account_id}/methods/{method_name}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id),
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url()),
         method_name = crate::rest_api::codegen::apis::urlencode(method_name)
     );
     let mut local_var_req_builder =
@@ -411,7 +412,7 @@ pub async fn get_blockchain_account_transactions(
     let local_var_uri_str = format!(
         "{}/v2/blockchain/accounts/{account_id}/transactions",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -867,7 +868,7 @@ pub async fn get_blockchain_raw_account(
     let local_var_uri_str = format!(
         "{}/v2/blockchain/accounts/{account_id}",
         local_var_configuration.base_path,
-        account_id = crate::rest_api::codegen::apis::urlencode(account_id)
+        account_id = crate::rest_api::codegen::apis::urlencode(account_id.to_base64_url())
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());

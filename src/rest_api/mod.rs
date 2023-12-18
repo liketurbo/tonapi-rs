@@ -57,6 +57,7 @@ pub mod accounts_api {
     use super::*;
 
     impl RestApi {
+        /// Get account's domains
         pub async fn account_dns_back_resolve(
             &self,
             params: AccountDnsBackResolveParams,
@@ -64,6 +65,7 @@ pub mod accounts_api {
             account_dns_back_resolve(&self.config, params).await
         }
 
+        /// parse address and display in all formats
         pub async fn address_parse(
             &self,
             params: AddressParseParams,
@@ -71,6 +73,7 @@ pub mod accounts_api {
             address_parse(&self.config, params).await
         }
 
+        /// Get human-friendly information about an account without low-level details.
         pub async fn get_account(
             &self,
             params: GetAccountParams,
@@ -78,6 +81,7 @@ pub mod accounts_api {
             get_account(&self.config, params).await
         }
 
+        /// Get account's balance change
         pub async fn get_account_diff(
             &self,
             params: GetAccountDiffParams,
@@ -85,6 +89,7 @@ pub mod accounts_api {
             get_account_diff(&self.config, params).await
         }
 
+        /// Get expiring account .ton dns
         pub async fn get_account_dns_expiring(
             &self,
             params: GetAccountDnsExpiringParams,
@@ -92,6 +97,7 @@ pub mod accounts_api {
             get_account_dns_expiring(&self.config, params).await
         }
 
+        /// Get event for an account by event_id
         pub async fn get_account_event(
             &self,
             params: GetAccountEventParams,
@@ -99,6 +105,7 @@ pub mod accounts_api {
             get_account_event(&self.config, params).await
         }
 
+        /// Get events for an account. Each event is built on top of a trace which is a series of transactions caused by one inbound message. TonAPI looks for known patterns inside the trace and splits the trace into actions, where a single action represents a meaningful high-level operation like a Jetton Transfer or an NFT Purchase. Actions are expected to be shown to users. It is advised not to build any logic on top of actions because actions can be changed at any time.
         pub async fn get_account_events(
             &self,
             params: GetAccountEventsParams,
@@ -106,6 +113,7 @@ pub mod accounts_api {
             get_account_events(&self.config, params).await
         }
 
+        /// Get the transfer jetton history for account and jetton
         pub async fn get_account_jetton_history_by_id(
             &self,
             params: GetAccountJettonHistoryByIdParams,
@@ -113,6 +121,7 @@ pub mod accounts_api {
             get_account_jetton_history_by_id(&self.config, params).await
         }
 
+        /// Get all Jettons balances by owner address
         pub async fn get_account_jettons_balances(
             &self,
             params: GetAccountJettonsBalancesParams,
@@ -120,6 +129,7 @@ pub mod accounts_api {
             get_account_jettons_balances(&self.config, params).await
         }
 
+        /// Get the transfer jettons history for account
         pub async fn get_account_jettons_history(
             &self,
             params: GetAccountJettonsHistoryParams,
@@ -127,6 +137,7 @@ pub mod accounts_api {
             get_account_jettons_history(&self.config, params).await
         }
 
+        /// Get all NFT items by owner address
         pub async fn get_account_nft_items(
             &self,
             params: GetAccountNftItemsParams,
@@ -134,6 +145,7 @@ pub mod accounts_api {
             get_account_nft_items(&self.config, params).await
         }
 
+        /// Get public key by account id
         pub async fn get_account_public_key(
             &self,
             params: GetAccountPublicKeyParams,
@@ -141,6 +153,7 @@ pub mod accounts_api {
             get_account_public_key(&self.config, params).await
         }
 
+        /// Get all subscriptions by wallet address
         pub async fn get_account_subscriptions(
             &self,
             params: GetAccountSubscriptionsParams,
@@ -148,6 +161,7 @@ pub mod accounts_api {
             get_account_subscriptions(&self.config, params).await
         }
 
+        /// Get traces for account
         pub async fn get_account_traces(
             &self,
             params: GetAccountTracesParams,
@@ -155,6 +169,7 @@ pub mod accounts_api {
             get_account_traces(&self.config, params).await
         }
 
+        /// Get human-friendly information about several accounts without low-level details.
         pub async fn get_accounts(
             &self,
             params: GetAccountsParams,
@@ -162,6 +177,7 @@ pub mod accounts_api {
             get_accounts(&self.config, params).await
         }
 
+        /// Update internal cache for a particular account
         pub async fn reindex_account(
             &self,
             params: ReindexAccountParams,
@@ -169,6 +185,7 @@ pub mod accounts_api {
             reindex_account(&self.config, params).await
         }
 
+        /// Search by account domain name
         pub async fn search_accounts(
             &self,
             params: SearchAccountsParams,
@@ -220,6 +237,7 @@ pub mod blockchain_api {
     use super::*;
 
     impl RestApi {
+        /// Blockchain account inspect
         pub async fn blockchain_account_inspect(
             &self,
             params: BlockchainAccountInspectParams,
@@ -227,6 +245,7 @@ pub mod blockchain_api {
             blockchain_account_inspect(&self.config, params).await
         }
 
+        /// Execute get method for account
         pub async fn exec_get_method_for_blockchain_account(
             &self,
             params: ExecGetMethodForBlockchainAccountParams,
@@ -234,6 +253,7 @@ pub mod blockchain_api {
             exec_get_method_for_blockchain_account(&self.config, params).await
         }
 
+        /// Get account transactions
         pub async fn get_blockchain_account_transactions(
             &self,
             params: GetBlockchainAccountTransactionsParams,
@@ -241,6 +261,7 @@ pub mod blockchain_api {
             get_blockchain_account_transactions(&self.config, params).await
         }
 
+        /// Get blockchain block data
         pub async fn get_blockchain_block(
             &self,
             params: GetBlockchainBlockParams,
@@ -248,6 +269,7 @@ pub mod blockchain_api {
             get_blockchain_block(&self.config, params).await
         }
 
+        /// Get transactions from block
         pub async fn get_blockchain_block_transactions(
             &self,
             params: GetBlockchainBlockTransactionsParams,
@@ -255,12 +277,14 @@ pub mod blockchain_api {
             get_blockchain_block_transactions(&self.config, params).await
         }
 
+        /// Get blockchain config
         pub async fn get_blockchain_config(
             &self,
         ) -> Result<BlockchainConfig, Error<GetBlockchainConfigError>> {
             get_blockchain_config(&self.config).await
         }
 
+        /// Get blockchain config from a specific block, if present.
         pub async fn get_blockchain_config_from_block(
             &self,
             params: GetBlockchainConfigFromBlockParams,
@@ -268,6 +292,7 @@ pub mod blockchain_api {
             get_blockchain_config_from_block(&self.config, params).await
         }
 
+        /// Get all blocks in all shards and workchains between target and previous masterchain block according to shards last blocks snapshot in masterchain.  We don't recommend to build your app around this method because it has problem with scalability and will work very slow in the future.
         pub async fn get_blockchain_masterchain_blocks(
             &self,
             params: GetBlockchainMasterchainBlocksParams,
@@ -275,12 +300,14 @@ pub mod blockchain_api {
             get_blockchain_masterchain_blocks(&self.config, params).await
         }
 
+        /// Get last known masterchain block
         pub async fn get_blockchain_masterchain_head(
             &self,
         ) -> Result<BlockchainBlock, Error<GetBlockchainMasterchainHeadError>> {
             get_blockchain_masterchain_head(&self.config).await
         }
 
+        /// Get blockchain block shards
         pub async fn get_blockchain_masterchain_shards(
             &self,
             params: GetBlockchainMasterchainShardsParams,
@@ -288,6 +315,7 @@ pub mod blockchain_api {
             get_blockchain_masterchain_shards(&self.config, params).await
         }
 
+        /// Get all transactions in all shards and workchains between target and previous masterchain block according to shards last blocks snapshot in masterchain. We don't recommend to build your app around this method because it has problem with scalability and will work very slow in the future.
         pub async fn get_blockchain_masterchain_transactions(
             &self,
             params: GetBlockchainMasterchainTransactionsParams,
@@ -295,6 +323,7 @@ pub mod blockchain_api {
             get_blockchain_masterchain_transactions(&self.config, params).await
         }
 
+        /// Get low-level information about an account taken directly from the blockchain.
         pub async fn get_blockchain_raw_account(
             &self,
             params: GetBlockchainRawAccountParams,
@@ -302,6 +331,7 @@ pub mod blockchain_api {
             get_blockchain_raw_account(&self.config, params).await
         }
 
+        /// Get transaction data
         pub async fn get_blockchain_transaction(
             &self,
             params: GetBlockchainTransactionParams,
@@ -309,6 +339,7 @@ pub mod blockchain_api {
             get_blockchain_transaction(&self.config, params).await
         }
 
+        /// Get transaction data by message hash
         pub async fn get_blockchain_transaction_by_message_hash(
             &self,
             params: GetBlockchainTransactionByMessageHashParams,
@@ -316,18 +347,21 @@ pub mod blockchain_api {
             get_blockchain_transaction_by_message_hash(&self.config, params).await
         }
 
+        /// Get blockchain validators
         pub async fn get_blockchain_validators(
             &self,
         ) -> Result<Validators, Error<GetBlockchainValidatorsError>> {
             get_blockchain_validators(&self.config).await
         }
 
+        /// Get raw blockchain config
         pub async fn get_raw_blockchain_config(
             &self,
         ) -> Result<RawBlockchainConfig, Error<GetRawBlockchainConfigError>> {
             get_raw_blockchain_config(&self.config).await
         }
 
+        /// Get raw blockchain config from a specific block, if present.
         pub async fn get_raw_blockchain_config_from_block(
             &self,
             params: GetRawBlockchainConfigFromBlockParams,
@@ -335,6 +369,7 @@ pub mod blockchain_api {
             get_raw_blockchain_config_from_block(&self.config, params).await
         }
 
+        /// Send message to blockchain
         pub async fn send_blockchain_message(
             &self,
             params: SendBlockchainMessageParams,
@@ -358,6 +393,7 @@ pub mod connect_api {
     use super::*;
 
     impl RestApi {
+        /// Get account info by state init
         pub async fn get_account_info_by_state_init(
             &self,
             params: GetAccountInfoByStateInitParams,
@@ -365,6 +401,7 @@ pub mod connect_api {
             get_account_info_by_state_init(&self.config, params).await
         }
 
+        /// Get a payload for further token receipt
         pub async fn get_ton_connect_payload(
             &self,
         ) -> Result<GetTonConnectPayload200Response, Error<GetTonConnectPayloadError>> {
@@ -389,6 +426,7 @@ pub mod dns_api {
     use super::*;
 
     impl RestApi {
+        /// DNS resolve for domain name
         pub async fn dns_resolve(
             &self,
             params: DnsResolveParams,
@@ -396,6 +434,7 @@ pub mod dns_api {
             dns_resolve(&self.config, params).await
         }
 
+        /// Get all auctions
         pub async fn get_all_auctions(
             &self,
             params: GetAllAuctionsParams,
@@ -403,6 +442,7 @@ pub mod dns_api {
             get_all_auctions(&self.config, params).await
         }
 
+        /// Get full information about domain name
         pub async fn get_dns_info(
             &self,
             params: GetDnsInfoParams,
@@ -410,6 +450,7 @@ pub mod dns_api {
             get_dns_info(&self.config, params).await
         }
 
+        /// Get domain bids
         pub async fn get_domain_bids(
             &self,
             params: GetDomainBidsParams,
@@ -438,6 +479,7 @@ pub mod emulation_api {
     use super::*;
 
     impl RestApi {
+        /// Decode a given message. Only external incoming messages can be decoded currently.
         pub async fn decode_message(
             &self,
             params: DecodeMessageParams,
@@ -445,6 +487,7 @@ pub mod emulation_api {
             decode_message(&self.config, params).await
         }
 
+        /// Emulate sending message to blockchain
         pub async fn emulate_message_to_account_event(
             &self,
             params: EmulateMessageToAccountEventParams,
@@ -452,6 +495,7 @@ pub mod emulation_api {
             emulate_message_to_account_event(&self.config, params).await
         }
 
+        /// Emulate sending message to blockchain
         pub async fn emulate_message_to_event(
             &self,
             params: EmulateMessageToEventParams,
@@ -459,6 +503,7 @@ pub mod emulation_api {
             emulate_message_to_event(&self.config, params).await
         }
 
+        /// Emulate sending message to blockchain
         pub async fn emulate_message_to_trace(
             &self,
             params: EmulateMessageToTraceParams,
@@ -466,6 +511,7 @@ pub mod emulation_api {
             emulate_message_to_trace(&self.config, params).await
         }
 
+        /// Emulate sending message to blockchain
         pub async fn emulate_message_to_wallet(
             &self,
             params: EmulateMessageToWalletParams,
@@ -486,6 +532,7 @@ pub mod events_api {
     use super::*;
 
     impl RestApi {
+        /// Get an event either by event ID or a hash of any transaction in a trace. An event is built on top of a trace which is a series of transactions caused by one inbound message. TonAPI looks for known patterns inside the trace and splits the trace into actions, where a single action represents a meaningful high-level operation like a Jetton Transfer or an NFT Purchase. Actions are expected to be shown to users. It is advised not to build any logic on top of actions because actions can be changed at any time.
         pub async fn get_event(
             &self,
             params: GetEventParams,
@@ -511,6 +558,7 @@ pub mod jettons_api {
     use super::*;
 
     impl RestApi {
+        /// Get jetton's holders
         pub async fn get_jetton_holders(
             &self,
             params: GetJettonHoldersParams,
@@ -518,6 +566,7 @@ pub mod jettons_api {
             get_jetton_holders(&self.config, params).await
         }
 
+        /// Get jetton metadata by jetton master address
         pub async fn get_jetton_info(
             &self,
             params: GetJettonInfoParams,
@@ -525,6 +574,7 @@ pub mod jettons_api {
             get_jetton_info(&self.config, params).await
         }
 
+        /// Get a list of all indexed jetton masters in the blockchain.
         pub async fn get_jettons(
             &self,
             params: GetJettonsParams,
@@ -532,6 +582,7 @@ pub mod jettons_api {
             get_jettons(&self.config, params).await
         }
 
+        /// Get only jetton transfers in the event
         pub async fn get_jettons_events(
             &self,
             params: GetJettonsEventsParams,
@@ -577,6 +628,7 @@ pub mod lite_server_api {
     use super::*;
 
     impl RestApi {
+        /// Get all raw shards info
         pub async fn get_all_raw_shards_info(
             &self,
             params: GetAllRawShardsInfoParams,
@@ -584,6 +636,7 @@ pub mod lite_server_api {
             get_all_raw_shards_info(&self.config, params).await
         }
 
+        /// Get raw account state
         pub async fn get_raw_account_state(
             &self,
             params: GetRawAccountStateParams,
@@ -591,6 +644,7 @@ pub mod lite_server_api {
             get_raw_account_state(&self.config, params).await
         }
 
+        /// Get raw block proof
         pub async fn get_raw_block_proof(
             &self,
             params: GetRawBlockProofParams,
@@ -598,6 +652,7 @@ pub mod lite_server_api {
             get_raw_block_proof(&self.config, params).await
         }
 
+        /// Get raw blockchain block
         pub async fn get_raw_blockchain_block(
             &self,
             params: GetRawBlockchainBlockParams,
@@ -605,6 +660,7 @@ pub mod lite_server_api {
             get_raw_blockchain_block(&self.config, params).await
         }
 
+        /// Get raw blockchain block header
         pub async fn get_raw_blockchain_block_header(
             &self,
             params: GetRawBlockchainBlockHeaderParams,
@@ -613,6 +669,7 @@ pub mod lite_server_api {
             get_raw_blockchain_block_header(&self.config, params).await
         }
 
+        /// Get raw blockchain block state
         pub async fn get_raw_blockchain_block_state(
             &self,
             params: GetRawBlockchainBlockStateParams,
@@ -621,6 +678,7 @@ pub mod lite_server_api {
             get_raw_blockchain_block_state(&self.config, params).await
         }
 
+        /// Get raw config
         pub async fn get_raw_config(
             &self,
             params: GetRawConfigParams,
@@ -628,6 +686,7 @@ pub mod lite_server_api {
             get_raw_config(&self.config, params).await
         }
 
+        /// Get raw list block transactions
         pub async fn get_raw_list_block_transactions(
             &self,
             params: GetRawListBlockTransactionsParams,
@@ -636,12 +695,14 @@ pub mod lite_server_api {
             get_raw_list_block_transactions(&self.config, params).await
         }
 
+        /// Get raw masterchain info
         pub async fn get_raw_masterchain_info(
             &self,
         ) -> Result<GetRawMasterchainInfo200Response, Error<GetRawMasterchainInfoError>> {
             get_raw_masterchain_info(&self.config).await
         }
 
+        /// Get raw masterchain info ext
         pub async fn get_raw_masterchain_info_ext(
             &self,
             params: GetRawMasterchainInfoExtParams,
@@ -650,6 +711,7 @@ pub mod lite_server_api {
             get_raw_masterchain_info_ext(&self.config, params).await
         }
 
+        /// Get raw shard block proof
         pub async fn get_raw_shard_block_proof(
             &self,
             params: GetRawShardBlockProofParams,
@@ -657,6 +719,7 @@ pub mod lite_server_api {
             get_raw_shard_block_proof(&self.config, params).await
         }
 
+        /// Get raw shard info
         pub async fn get_raw_shard_info(
             &self,
             params: GetRawShardInfoParams,
@@ -664,10 +727,12 @@ pub mod lite_server_api {
             get_raw_shard_info(&self.config, params).await
         }
 
+        /// Get raw time
         pub async fn get_raw_time(&self) -> Result<GetRawTime200Response, Error<GetRawTimeError>> {
             get_raw_time(&self.config).await
         }
 
+        /// Get raw transactions
         pub async fn get_raw_transactions(
             &self,
             params: GetRawTransactionsParams,
@@ -675,6 +740,7 @@ pub mod lite_server_api {
             get_raw_transactions(&self.config, params).await
         }
 
+        /// Send raw message to blockchain
         pub async fn send_raw_message(
             &self,
             params: SendRawMessageParams,
@@ -705,6 +771,7 @@ pub mod nft_api {
     use super::*;
 
     impl RestApi {
+        /// Get the transfer nft history
         pub async fn get_account_nft_history(
             &self,
             params: GetAccountNftHistoryParams,
@@ -712,6 +779,7 @@ pub mod nft_api {
             get_account_nft_history(&self.config, params).await
         }
 
+        /// Get NFT items from collection by collection address
         pub async fn get_items_from_collection(
             &self,
             params: GetItemsFromCollectionParams,
@@ -719,6 +787,7 @@ pub mod nft_api {
             get_items_from_collection(&self.config, params).await
         }
 
+        /// Get NFT collection by collection address
         pub async fn get_nft_collection(
             &self,
             params: GetNftCollectionParams,
@@ -726,6 +795,7 @@ pub mod nft_api {
             get_nft_collection(&self.config, params).await
         }
 
+        /// Get NFT collections
         pub async fn get_nft_collections(
             &self,
             params: GetNftCollectionsParams,
@@ -733,6 +803,7 @@ pub mod nft_api {
             get_nft_collections(&self.config, params).await
         }
 
+        /// Get the transfer nfts history for account
         pub async fn get_nft_history_by_id(
             &self,
             params: GetNftHistoryByIdParams,
@@ -740,6 +811,7 @@ pub mod nft_api {
             get_nft_history_by_id(&self.config, params).await
         }
 
+        /// Get NFT item by its address
         pub async fn get_nft_item_by_address(
             &self,
             params: GetNftItemByAddressParams,
@@ -747,6 +819,7 @@ pub mod nft_api {
             get_nft_item_by_address(&self.config, params).await
         }
 
+        /// Get NFT items by their addresses
         pub async fn get_nft_items_by_addresses(
             &self,
             params: GetNftItemsByAddressesParams,
@@ -767,6 +840,7 @@ pub mod rates_api {
     use super::*;
 
     impl RestApi {
+        /// Get chart by token
         pub async fn get_chart_rates(
             &self,
             params: GetChartRatesParams,
@@ -774,6 +848,7 @@ pub mod rates_api {
             get_chart_rates(&self.config, params).await
         }
 
+        /// Get the token price to the currency
         pub async fn get_rates(
             &self,
             params: GetRatesParams,
@@ -804,6 +879,7 @@ pub mod staking_api {
     use super::*;
 
     impl RestApi {
+        /// All pools where account participates
         pub async fn get_account_nominators_pools(
             &self,
             params: GetAccountNominatorsPoolsParams,
@@ -811,6 +887,7 @@ pub mod staking_api {
             get_account_nominators_pools(&self.config, params).await
         }
 
+        /// Pool history
         pub async fn get_staking_pool_history(
             &self,
             params: GetStakingPoolHistoryParams,
@@ -818,6 +895,7 @@ pub mod staking_api {
             get_staking_pool_history(&self.config, params).await
         }
 
+        /// Stacking pool info
         pub async fn get_staking_pool_info(
             &self,
             params: GetStakingPoolInfoParams,
@@ -825,6 +903,7 @@ pub mod staking_api {
             get_staking_pool_info(&self.config, params).await
         }
 
+        /// All pools available in network
         pub async fn get_staking_pools(
             &self,
             params: GetStakingPoolsParams,
@@ -843,6 +922,7 @@ pub mod storage_api {
     use super::*;
 
     impl RestApi {
+        /// Get TON storage providers deployed to the blockchain.
         pub async fn get_storage_providers(
             &self,
         ) -> Result<GetStorageProviders200Response, Error<GetStorageProvidersError>> {
@@ -862,6 +942,7 @@ pub mod traces_api {
     pub use codegen::apis::traces_api::GetTraceParams;
 
     impl RestApi {
+        /// Get the trace by trace ID or hash of any transaction in trace
         pub async fn get_trace(
             &self,
             params: GetTraceParams,
@@ -889,6 +970,7 @@ pub mod wallet_api {
     use super::*;
 
     impl RestApi {
+        /// Get account seqno
         pub async fn get_account_seqno(
             &self,
             params: GetAccountSeqnoParams,
@@ -896,6 +978,7 @@ pub mod wallet_api {
             get_account_seqno(&self.config, params).await
         }
 
+        /// Get backup info
         pub async fn get_wallet_backup(
             &self,
             params: GetWalletBackupParams,
@@ -903,6 +986,7 @@ pub mod wallet_api {
             get_wallet_backup(&self.config, params).await
         }
 
+        /// Get wallets by public key
         pub async fn get_wallets_by_public_key(
             &self,
             params: GetWalletsByPublicKeyParams,
@@ -910,6 +994,7 @@ pub mod wallet_api {
             get_wallets_by_public_key(&self.config, params).await
         }
 
+        /// Set backup info
         pub async fn set_wallet_backup(
             &self,
             params: SetWalletBackupParams,
@@ -917,6 +1002,7 @@ pub mod wallet_api {
             set_wallet_backup(&self.config, params).await
         }
 
+        /// Account verification and token issuance
         pub async fn ton_connect_proof(
             &self,
             params: TonConnectProofParams,

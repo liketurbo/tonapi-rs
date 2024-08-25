@@ -1,5 +1,5 @@
 use simple_logger::SimpleLogger;
-use tonapi::SseApi;
+use tonapi::{Network, SseApi};
 
 async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
     let mut stream = sse.transactions_stream(
@@ -59,7 +59,7 @@ async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Er
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     SimpleLogger::new().init().expect("logging init");
 
-    let sse_api = SseApi::new(tonapi::Network::Mainnet, None);
+    let sse_api = SseApi::new(Network::Mainnet, None);
 
     let _ = subscribe_to_transactions(&sse_api).await;
     let _ = subscribe_to_traces(&sse_api).await;

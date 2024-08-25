@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ```rust
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let sse_api = SseApi::new(tonapi::Network::Mainnet, None);
+    let sse_api = SseApi::new(Network::Mainnet, None);
 
     let mut stream = sse_api.transactions_stream(
         Some(vec![

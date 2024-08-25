@@ -1,18 +1,13 @@
 use simple_logger::SimpleLogger;
-use tonapi::{
-    stream_api::sse::{
-        MempoolStreamParams, SseApi, SseApiConfig, TracesStreamParams, TransactionsStreamParams,
-    },
-    TonAddress,
-};
+use tonapi::SseApi;
 
 async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = sse.transactions_stream(TransactionsStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-        operations: None,
-    });
+    let mut stream = sse.transactions_stream(
+        Some(vec![
+            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+        ]),
+        None,
+    );
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -27,11 +22,9 @@ async fn subscribe_to_transactions(sse: &SseApi) -> Result<(), Box<dyn std::erro
 }
 
 async fn subscribe_to_traces(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = sse.traces_stream(TracesStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-    });
+    let mut stream = sse.traces_stream(Some(vec![
+        "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+    ]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -46,11 +39,9 @@ async fn subscribe_to_traces(sse: &SseApi) -> Result<(), Box<dyn std::error::Err
 }
 
 async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = sse.mempool_stream(MempoolStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-    });
+    let mut stream = sse.mempool_stream(Some(vec![
+        "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+    ]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -67,7 +58,8 @@ async fn subscribe_to_mempool(sse: &SseApi) -> Result<(), Box<dyn std::error::Er
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     SimpleLogger::new().init().expect("logging init");
-    let sse_api = SseApi::new(SseApiConfig { auth_token: None });
+
+    let sse_api = SseApi::new(tonapi::Network::Mainnet, None);
 
     let _ = subscribe_to_transactions(&sse_api).await;
     let _ = subscribe_to_traces(&sse_api).await;

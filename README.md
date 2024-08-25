@@ -16,76 +16,30 @@ This is a SDK, that provides comprehensive support for interacting with the [Ton
 ### REST
 
 ```rust
-use tonapi::{
-    rest_api::{
-        accounts_api::{GetAccountNftItemsParams, GetAccountParams},
-        blockchain_api::GetBlockchainAccountTransactionsParams,
-        RestApi, RestApiConfig,
-    },
-    TonAddress,
-};
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let rest_api = RestApi::new(RestApiConfig { auth_token: None });
-    let account = rest_api
-        .get_account(GetAccountParams {
-            account_id: TonAddress::from_base64_url(
-                "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0",
-            )?,
-        })
-        .await?;
-    println!("Account: {}", account.balance);
+    let client = RestApiClientV2::new(Network::Mainnet, None);
 
-    let res = rest_api
-        .get_account_nft_items(GetAccountNftItemsParams {
-            account_id: TonAddress::from_base64_url(
-                "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0",
-            )?,
-            collection: None,
-            indirect_ownership: None,
-            limit: Some(10),
-            offset: None,
-        })
-        .await?;
-    println!("Nfts len: {}", res.nft_items.len());
-
-    let res = rest_api
-        .get_blockchain_account_transactions(GetBlockchainAccountTransactionsParams {
-            account_id: TonAddress::from_base64_url(
-                "EQBszTJahYw3lpP64ryqscKQaDGk4QpsO7RO6LYVvKHSINS0",
-            )?,
-            after_lt: Some(25758317000002),
-            before_lt: None,
-            limit: Some(10),
-        })
-        .await?;
-    println!("Transactions len: {}", res.transactions.len());
+    let result = client.get_account(ACCOUNT_ID).await.unwrap();
+    println!("Account balance: {}", result.balance);
 
     Ok(())
 }
-
 ```
 
 ## SSE
 
 ```rust
-use tonapi::{
-    stream_api::sse::{
-        SseApi, SseApiConfig, TransactionsStreamParams,
-    },
-    TonAddress,
-};
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let sse_api = SseApi::new(SseApiConfig { auth_token: None });
-    let mut stream = sse.transactions_stream(TransactionsStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-        operations: None,
-    });
+    let sse_api = SseApi::new(tonapi::Network::Mainnet, None);
+
+    let mut stream = sse_api.transactions_stream(
+        Some(vec![
+            "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+        ]),
+        None,
+    );
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -103,24 +57,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## WebSocket
 
 ```rust
-use tonapi::{
-    stream_api::ws::{
-        AccountOperations, TransactionsStreamParams, WsApi, WsApiConfig,
-    },
-    TonAddress,
-};
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let ws_api = WsApi::new(WsApiConfig { auth_token: None });
-    let mut stream = ws.transactions_stream(TransactionsStreamParams {
-        account_operations: Some(vec![AccountOperations {
-            account: TonAddress::from_hex_str(
-                "-1:5555555555555555555555555555555555555555555555555555555555555555",
-            )?,
-            operations: None,
-        }]),
-    });
+    let ws_api = WsApi::new(Network::Mainnet, None);
+
+    let mut stream = ws.transactions_stream(Some(vec![AccountOperations {
+        account: "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+        operations: None
+    }]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {

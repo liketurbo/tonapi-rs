@@ -4,7 +4,8 @@ use log::debug;
 use reqwest::RequestBuilder;
 use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
-use tonlib::address::TonAddress;
+
+use crate::Network;
 
 mod constants {
     include!(concat!(env!("OUT_DIR"), "/constants.rs"));
@@ -14,34 +15,22 @@ pub struct SseApi {
     connect_request: reqwest::Request,
 }
 
-pub struct SseApiConfig {
-    pub auth_token: Option<String>,
-}
-
-pub struct TransactionsStreamParams {
-    pub accounts: Option<Vec<TonAddress>>,
-    pub operations: Option<Vec<String>>,
-}
-
-pub struct TracesStreamParams {
-    pub accounts: Option<Vec<TonAddress>>,
-}
-
-pub struct MempoolStreamParams {
-    pub accounts: Option<Vec<TonAddress>>,
-}
-
 impl SseApi {
-    pub fn new(config: SseApiConfig) -> Self {
+    pub fn new(network: Network, api_key: Option<String>) -> Self {
         let client = reqwest::Client::builder()
             .user_agent(constants::USER_AGENT)
             .build()
             .expect("build client");
-        let mut builder =
-            client.get(reqwest::Url::parse("https://tonapi.io/v2/sse/").expect("docs url"));
 
-        if let Some(a_token) = config.auth_token {
-            builder = builder.bearer_auth(a_token);
+        let base_url = match network {
+            Network::Mainnet => "https://tonapi.io/v2/sse/",
+            Network::Testnet => "https://testnet.tonapi.io/v2/sse/",
+        };
+
+        let mut builder = client.get(reqwest::Url::parse(base_url).expect("docs url"));
+
+        if let Some(api_key) = api_key {
+            builder = builder.bearer_auth(api_key);
         }
 
         let connect_request = builder.build().expect("build request");
@@ -49,7 +38,7 @@ impl SseApi {
         SseApi { connect_request }
     }
 
-    pub fn transactions_stream(&self, params: TransactionsStreamParams) -> TransactionsStream {
+    pub fn transactions_stream(&self, accounts: Option<Vec<String>>, operations: Option<Vec<String>>) -> TransactionsStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
@@ -57,13 +46,13 @@ impl SseApi {
             .join("accounts/transactions")
             .expect("accounts/transactions join with base");
 
-        let accounts = params.accounts.and_then(|a| {
+        let accounts = accounts.and_then(|a| {
             if a.is_empty() {
                 return None;
             }
-            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
+            Some(a)
         });
-        let operations = params.operations.and_then(|o| {
+        let operations = operations.and_then(|o| {
             if o.is_empty() {
                 return None;
             }
@@ -98,7 +87,7 @@ impl SseApi {
         ))
     }
 
-    pub fn traces_stream(&self, params: TracesStreamParams) -> TracesStream {
+    pub fn traces_stream(&self, accounts: Option<Vec<String>>) -> TracesStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
@@ -106,11 +95,11 @@ impl SseApi {
             .join("accounts/traces")
             .expect("accounts/traces join with base");
 
-        let accounts = params.accounts.and_then(|a| {
+        let accounts = accounts.and_then(|a| {
             if a.is_empty() {
                 return None;
             }
-            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
+            Some(a)
         });
 
         match accounts {
@@ -131,17 +120,17 @@ impl SseApi {
         ))
     }
 
-    pub fn mempool_stream(&self, params: MempoolStreamParams) -> MempoolStream {
+    pub fn mempool_stream(&self, accounts: Option<Vec<String>>) -> MempoolStream {
         let mut connect_request = self.connect_request.try_clone().expect("clone request");
         let url = connect_request.url_mut();
 
         *url = url.join("mempool").expect("mempool join with base");
 
-        let accounts = params.accounts.and_then(|a| {
+        let accounts = accounts.and_then(|a| {
             if a.is_empty() {
                 return None;
             }
-            Some(a.iter().map(|a| a.to_base64_url()).collect::<Vec<_>>())
+            Some(a)
         });
 
         if let Some(acs) = accounts {
@@ -261,5 +250,5 @@ impl MempoolStream {
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
     pub boc: String,
-    pub involved_accounts: Vec<TonAddress>,
+    pub involved_accounts: Vec<String>,
 }

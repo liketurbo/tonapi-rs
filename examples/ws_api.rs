@@ -1,21 +1,11 @@
 use simple_logger::SimpleLogger;
-use tonapi::{
-    stream_api::ws::{
-        AccountOperations, MempoolStreamParams, TracesStreamParams, TransactionsStreamParams,
-        WsApi, WsApiConfig,
-    },
-    TonAddress,
-};
+use tonapi::{AccountOperations, Network, WsApi};
 
 async fn subscribe_to_transactions(ws: &WsApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = ws.transactions_stream(TransactionsStreamParams {
-        account_operations: Some(vec![AccountOperations {
-            account: TonAddress::from_hex_str(
-                "-1:5555555555555555555555555555555555555555555555555555555555555555",
-            )?,
-            operations: None,
-        }]),
-    });
+    let mut stream = ws.transactions_stream(Some(vec![AccountOperations {
+        account: "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+        operations: None
+    }]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -30,11 +20,9 @@ async fn subscribe_to_transactions(ws: &WsApi) -> Result<(), Box<dyn std::error:
 }
 
 async fn subscribe_to_traces(ws: &WsApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = ws.traces_stream(TracesStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-    });
+    let mut stream = ws.traces_stream(Some(vec![
+        "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+    ]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -49,11 +37,9 @@ async fn subscribe_to_traces(ws: &WsApi) -> Result<(), Box<dyn std::error::Error
 }
 
 async fn subscribe_to_mempool(ws: &WsApi) -> Result<(), Box<dyn std::error::Error>> {
-    let mut stream = ws.mempool_stream(MempoolStreamParams {
-        accounts: Some(vec![TonAddress::from_hex_str(
-            "-1:5555555555555555555555555555555555555555555555555555555555555555",
-        )?]),
-    });
+    let mut stream = ws.mempool_stream(Some(vec![
+        "-1:5555555555555555555555555555555555555555555555555555555555555555".to_string(),
+    ]));
 
     while let Ok(evt) = stream.next().await {
         if let Some(evt) = evt {
@@ -70,7 +56,8 @@ async fn subscribe_to_mempool(ws: &WsApi) -> Result<(), Box<dyn std::error::Erro
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     SimpleLogger::new().init().expect("logging init");
-    let ws_api = WsApi::new(WsApiConfig { auth_token: None });
+
+    let ws_api = WsApi::new(Network::Mainnet, None);
 
     let _ = subscribe_to_transactions(&ws_api).await;
     let _ = subscribe_to_traces(&ws_api).await;

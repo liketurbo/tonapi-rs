@@ -8,7 +8,8 @@ use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tokio_tungstenite::tungstenite::http;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::{connect_async, WebSocketStream};
-use tonlib::address::TonAddress;
+
+use crate::Network;
 
 mod constants {
     include!(concat!(env!("OUT_DIR"), "/constants.rs"));
@@ -18,30 +19,19 @@ pub struct WsApi {
     connect_params: http::request::Parts,
 }
 
-pub struct WsApiConfig {
-    pub auth_token: Option<String>,
-}
-
-pub struct TransactionsStreamParams {
-    pub account_operations: Option<Vec<AccountOperations>>,
-}
-
 pub struct AccountOperations {
-    pub account: TonAddress,
+    pub account: String,
     pub operations: Option<Vec<String>>,
 }
 
-pub struct TracesStreamParams {
-    pub accounts: Option<Vec<TonAddress>>,
-}
-
-pub struct MempoolStreamParams {
-    pub accounts: Option<Vec<TonAddress>>,
-}
-
 impl WsApi {
-    pub fn new(config: WsApiConfig) -> Self {
-        let mut request = "wss://tonapi.io/v2/websocket"
+    pub fn new(network: Network, api_key: Option<String>) -> Self {
+let base_url = match network {
+            Network::Mainnet => "wss://tonapi.io/v2/websocket",
+            Network::Testnet => "wss://testnet.tonapi.io/v2/websocket",
+        };
+
+        let mut request = base_url
             .into_client_request()
             .expect("docs url");
 
@@ -50,8 +40,8 @@ impl WsApi {
             HeaderValue::from_static(constants::USER_AGENT),
         );
 
-        if let Some(a_token) = config.auth_token {
-            let bearer_token = format!("Bearer {}", a_token);
+        if let Some(api_key) = api_key {
+            let bearer_token = format!("Bearer {}", api_key);
             request.headers_mut().insert(
                 "Authorization",
                 HeaderValue::from_str(&bearer_token)
@@ -66,17 +56,17 @@ impl WsApi {
 
     pub fn transactions_stream(
         &self,
-        subscribe_params: TransactionsStreamParams,
+        account_operations: Option<Vec<AccountOperations>>,
     ) -> TransactionsStream {
-        TransactionsStream::new(&self.connect_params, subscribe_params)
+        TransactionsStream::new(&self.connect_params, account_operations)
     }
 
-    pub fn traces_stream(&self, subscribe_params: TracesStreamParams) -> TracesStream {
-        TracesStream::new(&self.connect_params, subscribe_params)
+    pub fn traces_stream(&self, accounts: Option<Vec<String>>) -> TracesStream {
+        TracesStream::new(&self.connect_params, accounts.map(|accounts| StreamParams { entries: accounts }))
     }
 
-    pub fn mempool_stream(&self, subscribe_params: MempoolStreamParams) -> MempoolStream {
-        MempoolStream::new(&self.connect_params, subscribe_params)
+    pub fn mempool_stream(&self, accounts: Option<Vec<String>>) -> MempoolStream {
+        MempoolStream::new(&self.connect_params, accounts.map(|accounts| StreamParams { entries: accounts }))
     }
 }
 
@@ -287,15 +277,15 @@ pub struct TransactionsStream {
 impl TransactionsStream {
     pub(crate) fn new(
         connect_params: &http::request::Parts,
-        subscribe_params: TransactionsStreamParams,
+        subscribe_params: Option<Vec<AccountOperations>>,
     ) -> Self {
-        let subscribe_params = subscribe_params.account_operations.map(|acs_ops| {
+        let subscribe_params = subscribe_params.map(|acs_ops| {
             let entries = acs_ops
                 .into_iter()
                 .map(|ac_op| {
                     let ops = ac_op.operations.unwrap_or_default();
                     if ops.is_empty() {
-                        ac_op.account.to_base64_url()
+                        ac_op.account
                     } else {
                         format!("{};{}", ac_op.account, ops.join(","))
                     }
@@ -347,15 +337,13 @@ pub struct TracesStream {
 impl TracesStream {
     pub(crate) fn new(
         connect_params: &http::request::Parts,
-        subscribe_params: TracesStreamParams,
+        subscribe_params: Option<StreamParams>,
     ) -> Self {
         Self {
             ws_stream: WsStream::new(
                 connect_params,
                 WsMethod::SubscribeTrace,
-                subscribe_params.accounts.map(|a| StreamParams {
-                    entries: a.iter().map(|a| a.to_base64_url()).collect(),
-                }),
+                subscribe_params,
             ),
         }
     }
@@ -397,15 +385,13 @@ pub struct MempoolStream {
 impl MempoolStream {
     pub(crate) fn new(
         connect_params: &http::request::Parts,
-        subscribe_params: MempoolStreamParams,
+        subscribe_params: Option<StreamParams>,
     ) -> Self {
         Self {
             ws_stream: WsStream::new(
                 connect_params,
                 WsMethod::SubscribeMempool,
-                subscribe_params.accounts.map(|a| StreamParams {
-                    entries: a.iter().map(|a| a.to_base64_url()).collect(),
-                }),
+                subscribe_params,
             ),
         }
     }
@@ -437,5 +423,5 @@ impl MempoolStream {
 #[derive(Deserialize, Debug)]
 pub struct MempoolEventData {
     pub boc: String,
-    pub involved_accounts: Option<Vec<TonAddress>>,
+    pub involved_accounts: Option<Vec<String>>,
 }

@@ -1,4 +1,10 @@
-pub mod rest_api;
-pub mod stream_api;
+mod stream_api;
+mod rest_api;
 
-pub use tonlib::address::TonAddress;
+pub use stream_api::*;
+pub use rest_api::*;
+
+pub enum Network {
+    Mainnet,
+    Testnet,
+}

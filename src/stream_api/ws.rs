@@ -287,7 +287,7 @@ impl TransactionsStream {
                     if ops.is_empty() {
                         ac_op.account
                     } else {
-                        format!("{};{}", ac_op.account, ops.join(","))
+                        format!("{};operations={}", ac_op.account, ops.join(","))
                     }
                 })
                 .collect();

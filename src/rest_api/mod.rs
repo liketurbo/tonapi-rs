@@ -1,7 +1,7 @@
-mod base;
-mod error;
-mod models;
-mod v2;
-mod query_params;
+pub mod base;
+pub mod error;
+pub mod models;
+pub mod v2;
+pub mod query_params;
 
 pub use v2::RestApiClientV2;

@@ -95,6 +95,7 @@ pub struct JettonPreview {
 #[serde(rename_all = "lowercase")]
 pub enum JettonVerificationType {
     Whitelist,
+    GrayList,
     Blacklist,
     None,
 }
